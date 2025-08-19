@@ -3,6 +3,8 @@ from astropy.io import fits
 from psr_lib import data_processing as processing
 from psr_lib import interface
 
+from matplotlib import pyplot as plt
+
 def read_FAST_data(file_name):
     Is = np.array(0)
     Ls = np.array(0)

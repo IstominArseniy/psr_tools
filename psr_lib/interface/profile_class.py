@@ -1,6 +1,8 @@
 import numpy as np
 from matplotlib import pyplot as plt
 import scipy.interpolate
+import scipy.signal
+import scipy.interpolate
 
 from psr_lib import data_processing as processing
 
@@ -86,180 +88,126 @@ class PulsarProfile:
     def get_W50(self):
         return self.get_Wa(50)
     
+    def get_level_bounds(self, level):
+        """
+        params: level - from 0 to 100 %
+        returns: leftmost and rightmost indicies correspoding to level
+        """
+        height = np.max(self.I) * (level/100)
+        # oversampling------------------------------------------
+        phase = np.linspace(0, 1, self.Ncounts)
+        phase_x100 = np.linspace(0, 1, 100 * self.Ncounts)
+        Is = scipy.interpolate.interp1d(phase, self.I)(phase_x100) # TODO test smoothed profile (as it was before)
+        #--------------------------------------------------------
+        inds = np.where(np.isclose(Is, height, rtol=5e-2))[0]
 
+        if inds.shape[0] == 0:
+            left_ind = 0
+            right_ind = self.Ncounts - 1
+        else:
+            left_ind = inds[0] // 100
+            right_ind = inds[-1] // 100
 
+        if right_ind - left_ind < 3: # provide at least three points interval # TODO make more accurate bounds in this case
+            left_ind = max(0, left_ind - 3)
+            right_ind = min(self.Ncounts-1, right_ind + 3)
+
+        return (left_ind, right_ind)
+
+    def find_emission_mode(self, boarder_value=0.4):
+        left_ind, right_ind = self.get_level_bounds(10)
+        Vs = self.V[left_ind:right_ind]
+        PAs = self.PA[left_ind:right_ind]
+        Imax = np.max(self.I)
+        Is = self.I[left_ind:right_ind] / Imax
+        Ls = self.L[left_ind:right_ind] / Imax
+        noise = processing.noise_estimation(self.I) / Imax
+
+        quality_L_mask = ((Ls / (np.abs(Is) + 0.01)) > 0.1) & (Is > 4 * noise)
+        N = Vs.shape[0]
+        xs = np.arange(0, N, 1) # arbitrary "even steps" array
+        if len(xs[quality_L_mask]) <= 3:
+            return '?' # Not enough quality points 
+        # PA qubic spline interpolation ------------------------------------------------
+        spl = scipy.interpolate.splrep(xs[quality_L_mask], PAs[quality_L_mask], s=N*5**2)
+        PA_func = scipy.interpolate.BSpline(*spl)
+        # ------------------------------------------------------------------------------
+        ders = PA_func(xs, 1) 
+        count = 0
+        for i in range(N):
+            count += ((Vs[i]>0) * 2 - 1) * ((ders[i]>0) * 2 - 1)
+        if count / N > boarder_value:
+            return 'X'
+        elif count / N < -boarder_value:
+            return 'O'
+        else:
+            return '?'
         
+    def get_smoothed_profile(self): # TODO Write general routine to smooth arrays based on noise estimation
+        """
+        smooth intencity profile using smooth qubic spilnes
+        """
+        noise = processing.noise_estimation(self.I)
+        phase = np.linspace(0, 1, self.Ncounts)
+        spl = scipy.interpolate.splrep(phase, self.I, s=1.4 * self.Ncounts*noise**2)
+        I_func = scipy.interpolate.BSpline(*spl)
+        return I_func(phase)
 
+    def find_peaks(self):
+        """
+        find peaks in intensity profile
+        """
+        noise = processing.noise_estimation(self.I)
+        smoothed_profile = self.get_smoothed_profile()
+        peaks, info = scipy.signal.find_peaks(smoothed_profile, prominence = 4 * noise, height=max(4 * noise, np.max(smoothed_profile) * 0.01))
+        return peaks
 
+    def find_profile_type(self):
+        peaks_arr = self.find_peaks()
+        if peaks_arr.shape[0] == 1:
+            return 'single'
+        elif peaks_arr.shape[0] >= 2:
+            dists = scipy.spatial.distance.cdist(peaks_arr.reshape((-1, 1)), peaks_arr.reshape((-1, 1)), lambda u, v: min((u-v)%self.Ncounts, (v-u)%self.Ncounts))
+            maxdist = np.max(dists)
+            if maxdist > 0.9 * self.Ncounts / 2:
+                return 'orthogonal'
+            else:
+                if peaks_arr.shape[0] == 2:
+                    return 'double'
+                elif peaks_arr.shape[0] == 3:
+                    return 'tripple'
+                else:
+                    return 'complex'
+        else:
+            print("Error occured during profile type identifiction. Nan has been returned.")
+            return np.nan
     
-
-
-
-
-# class PulsarProfile:
-#     def load_profile_data(self):
-#         """
-#         loads profile data
-#         data[0] = I, data[1] = Q, data[2] = U, data[3] = V, data[4] = L, data[5] = PA
-#         returns: data 
-#         """
-#         if self.source == 'FAST':
-#             data = DataLoaders.load_FAST_data(self.file_name)
-#         elif self.source == 'MeerKAT':
-#             data = DataLoaders.load_MeerKAT_mean_data(self.file_name)
-#         elif self.source == 'EPN':
-#             data = DataLoaders.load_EPN_data(self.file_name)
-#         elif self.source == 'MeerKAT_one_channel':
-#             data, freq = DataLoaders.load_MeerKAT_channel_data(self.file_name, self.channel)
-#             self.freq = freq
-#         else:
-#             print('Unknown source!!!') #TODO raise error
-#         return data
-
-#     def __init__(self, file_name, source, channel=0):
-#         self.file_name = file_name
-#         self.source = source
-#         self.channel=channel
-#         self.freq = 0 # Hz
-#         data = self.load_profile_data()
-#         self.I = data[0]
-#         self.Q = data[1]
-#         self.U = data[2]
-#         self.V = data[3]
-#         self.L = data[4]
-#         self.PA = data[5]
-#         self.Ncounts = self.I.shape[0]
-#         self.peaks_arr = self.find_peaks()
-#         self.profile_type = self.find_profile_type()
-
-#     def get_smoothed_profile(self):
-#         noise = AuxFunctions.noise_estimation(self.I)
-#         phase = np.linspace(0, 1, self.Ncounts)
-#         spl = scipy.interpolate.splrep(phase, self.I, s=1.4 * self.Ncounts*noise**2)
-#         I_func = scipy.interpolate.BSpline(*spl)
-#         return I_func(phase)
-
-#     def plot_profile(self, plot_pol=True, plot_fit=False, zoom=False):
-#         fig, axs = plt.subplots(2, height_ratios=[1, 4])
-#         fig.suptitle(self.file_name)
-#         noise = AuxFunctions.noise_estimation(self.I)
-#         left_ind = 0
-#         right_ind = self.Ncounts - 1
-#         if zoom == True:
-#             left_ind, right_ind = self.get_level_bounds(10)
-#             left_ind, right_ind = \
-#                 int(max(left_ind - 0.25 * (right_ind - left_ind), 0)), int(min(right_ind + 0.25 * (right_ind - left_ind), self.Ncounts - 1))
-#         phase = np.linspace(left_ind / self.Ncounts, (right_ind + 1)/self.Ncounts, right_ind - left_ind + 1)
-
-#         good_L_array = ((self.L[left_ind : right_ind + 1] / (np.abs(self.I[left_ind : right_ind + 1]) + 0.01)) > 0.1) & (self.I[left_ind : right_ind + 1] > 4 * noise)
-#         axs[0].set_xlim(left_ind / self.Ncounts, (right_ind + 1)/self.Ncounts)
-#         axs[0].scatter(phase[good_L_array], self.PA[left_ind : right_ind + 1][good_L_array], c='black', s=3)
-#         axs[1].plot(phase, self.I[left_ind : right_ind + 1], c='black', label='I', linewidth=1)
-#         if plot_pol == True:
-#             axs[1].plot(phase, self.V[left_ind : right_ind + 1], c='blue', label='V')
-#             axs[1].plot(phase, self.L[left_ind : right_ind + 1], c='red', label='L')
-#         if plot_fit == True:
-#             axs[1].plot(phase, self.get_smoothed_profile()[left_ind : right_ind + 1], c='yellow')
-#         fig.legend()
-#         fig.show()
-#         return fig, axs
+    def plot_profile(self, plot_polarisation=True, plot_fit=False, zoom=False):
+        fig, axs = plt.subplots(2, height_ratios=[1, 4])
+        noise = processing.noise_estimation(self.I)
+        left_ind = 0 # leftmost index to plot
+        right_ind = self.Ncounts - 1 # rightmost index to plot
+        if zoom == True: # find W10 and add 0.25 of W10 length to left and to right
+            left_ind, right_ind = self.get_level_bounds(10)
+            left_ind, right_ind = \
+                int(max(left_ind - 0.25 * (right_ind - left_ind), 0)), int(min(right_ind + 0.25 * (right_ind - left_ind), self.Ncounts - 1))
+            
+        phase_arr = np.linspace(left_ind / self.Ncounts, (right_ind + 1)/self.Ncounts, right_ind - left_ind + 1)
+        Is = self.I[left_ind : right_ind + 1]
+        Ls = self.L[left_ind : right_ind + 1]
+        Vs = self.V[left_ind : right_ind + 1]
+        PAs = self.PA[left_ind : right_ind + 1]
+        quality_L_array = ((Ls / (np.abs(Is) + 0.01 * np.max(Is))) > 0.1) & (Is > 4 * noise)
+        axs[0].set_xlim(left_ind / self.Ncounts, (right_ind + 1)/self.Ncounts)
+        axs[0].scatter(phase_arr[quality_L_array], PAs[quality_L_array], c='black', s=3)
+        axs[1].plot(phase_arr, Is, c='black', label='I', linewidth=1)
+        if plot_polarisation == True:
+            axs[1].plot(phase_arr, Vs, c='blue', label='V')
+            axs[1].plot(phase_arr, Ls, c='red', label='L')
+        if plot_fit == True:
+            axs[1].plot(phase_arr, self.get_smoothed_profile()[left_ind : right_ind + 1], c='yellow')
+        fig.legend()
+        fig.show()
+        return fig, axs
         
-#     def find_peaks(self):
-#         noise = AuxFunctions.noise_estimation(self.I)
-#         smoothed_profile = self.get_smoothed_profile()
-#         # peaks, info = scipy.signal.find_peaks(smoothed_profile, prominence=np.max(smoothed_profile * 0.05), height=2 * noise) #before here was max(smoothed_profile * 0.05) and height=4*noise
-#         peaks, info = scipy.signal.find_peaks(smoothed_profile, prominence = 4 * noise, height=max(4 * noise, np.max(smoothed_profile) * 0.01))
-#         return peaks
 
-#     def find_profile_type(self):
-#         if self.peaks_arr.shape[0] == 1:
-#             return 'single'
-#         elif self.peaks_arr.shape[0] >= 2:
-#             dists = scipy.spatial.distance.cdist(self.peaks_arr.reshape((-1, 1)), self.peaks_arr.reshape((-1, 1)), lambda u, v: min((u-v)%self.Ncounts, (v-u)%self.Ncounts))
-#             maxdist = np.max(dists)
-#             if maxdist > 0.9 * self.Ncounts / 2:
-#                 return 'orthogonal'
-#             else:
-#                 if self.peaks_arr.shape[0] == 2:
-#                     return 'double'
-#                 elif self.peaks_arr.shape[0] == 3:
-#                     return 'tripple'
-#                 else:
-#                     return 'complex'
-#         else:
-#             return 'error'
-        
-#     def get_level_bounds(self, level):
-#         """
-#         params: level - from 0 to 100
-#         returns: leftmost and right most indicies correspoding to level
-#         """
-#         height = np.max(self.I) * (level/100)
-#         # oversampling-------
-#         phase = np.linspace(0, 1, self.Ncounts)
-#         phase_x10 = np.linspace(0, 1, 10 * self.Ncounts)
-#         Is = scipy.interpolate.interp1d(phase, self.get_smoothed_profile())(phase_x10)
-#         #--------------------
-#         inds = np.where(np.isclose(Is, height, rtol=5e-2))[0]
-#         if inds.shape[0] == 0:
-#             left_ind = 0
-#             right_ind = self.Ncounts - 1
-#         else:
-#             left_ind = inds[0] // 10
-#             right_ind = inds[-1] // 10
-#         if right_ind - left_ind < 3:
-#             left_ind = max(0, left_ind - 3)
-#             right_ind = min(self.Ncounts-1, right_ind + 3)
-
-#         return (left_ind, right_ind)
-
-#     def get_Wa(self, a):
-#         """
-#         params: a - level (from 0 to 100)
-#         returns: W_a - width on level a
-#         """
-#         height_a = np.max(self.I) * (a/100)
-#         # oversampling-------
-#         phase = np.linspace(0, 1, self.Ncounts)
-#         phase_x10 = np.linspace(0, 1, 10 * self.Ncounts)
-#         Is = scipy.interpolate.interp1d(phase, self.get_smoothed_profile())(phase_x10)
-#         #--------------------
-#         try:
-#             left_ind = np.where(np.isclose(Is, height_a, rtol=1e-1))[0][0]
-#             right_ind = np.where(np.isclose(Is, height_a, rtol=1e-1))[0][-1]
-#         except:
-#             return np.nan
-#         # print(left_ind/self.Ncounts, right_ind/self.Ncounts, self.I[left_ind] / np.max(self.I), self.I[right_ind] / np.max(self.I))
-#         return 360 * (right_ind - left_ind) / 10 / self.Ncounts
-
-#         # iil = np.where(np.isclose(pulsar_data[0][:peaks[0]], min(pulsar_data[0][:peaks[0]], key=lambda x:abs(x-height50))))[0][0]
-#         # iir = np.where(np.isclose(pulsar_data[0][peaks[0]:], min(pulsar_data[0][peaks[0]:], key=lambda x:abs(x-height50))))[0][0] + peaks[0]
-#         # if iir <= peaks[1]:
-#         #     height50 = np.max(pulsar_data[0][peaks[1]])/2
-#         #     iir = np.where(np.isclose(pulsar_data[0][peaks[1]:], min(pulsar_data[0][peaks[1]:], key=lambda x:abs(x-height50))))[0][0] + peaks[1]
-
-#     def get_mode(self):
-#         left_ind, right_ind = self.get_level_bounds(10)
-#         # print(left_ind, right_ind)
-#         Varray = self.V[left_ind:right_ind]
-#         PAarray = self.PA[left_ind:right_ind]
-#         noise = AuxFunctions.noise_estimation(self.I)
-#         good_L_array = ((self.L[left_ind:right_ind] / (np.abs(self.I[left_ind:right_ind]) + 0.01)) > 0.1) & (self.I[left_ind:right_ind] > 4 * noise)
-#         N = Varray.shape[0]
-#         xs = np.arange(0, N, 1)
-#         if len(xs[good_L_array]) <= 3:
-#             return '?'
-#         spl = scipy.interpolate.splrep(xs[good_L_array], PAarray[good_L_array], s=N*5**2)
-#         PA_func = scipy.interpolate.BSpline(*spl)
-#         ders = PA_func(xs, 1) 
-#         count = 0
-#         for i in range(N):
-#             count += ((Varray[i]>0) * 2 - 1) * ((ders[i]>0) * 2 - 1)
-#         count = count / N
-#         # print(count)
-#         if count > 0.4:
-#             return 'X'
-#         elif count < -0.4:
-#             return 'O'
-#         else:
-#             return '?'

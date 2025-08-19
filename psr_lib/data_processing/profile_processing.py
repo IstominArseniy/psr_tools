@@ -12,14 +12,16 @@ def noise_estimation(data):
     
 def noise_mean(data):
     N = data.shape[0]
-    n5 = N // 5
+    n8 = N // 8
     std = np.max(data) - np.min(data)
     mean = 0
-    for i in range(5):
-        if np.sqrt(np.var(data[i * n5: (i+1) * n5])) < std:
-            std = np.sqrt(np.var(data[i * n5: (i+1) * n5]))
-            mean = np.mean(data[i * n5: (i+1) * n5])
+    for i in range(8): # find mean of the minimum std piece
+        if np.sqrt(np.var(data[i * n8: (i+1) * n8])) < std:
+            std = np.sqrt(np.var(data[i * n8: (i+1) * n8]))
+            mean = np.mean(data[i * n8: (i+1) * n8])
     return mean
+
+
 
 def calculate_width(chi, beta, rho):
     dzeta = beta + chi
