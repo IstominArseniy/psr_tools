@@ -3,6 +3,8 @@ from ..utils import constants
 from scipy import integrate
 from ..utils import utils_funcs as ufunc
 
+import tomlkit
+
 """
 Class with basic information about RadioPulsar
 """
@@ -20,26 +22,13 @@ class RadioPulsar():
         self.Ir = Ir # in Solar masses * km^2
         # ----------------Set derived parameters------------------------
         self.chi = chi_deg / 180 * np.pi
-        # B_type options: ATNF, BGI, MHD, USER
-        #-************************
-        # if B_model_type == 'ATNF':
-        #     self.B0_12 = P**0.5 * P_DOT**0.5
-        # elif B_model_type == 'BGI':
-        #     self.B0_12 = min((P**0.5 * P_DOT**0.5)/np.cos(self.CHI)**2, 10)
-        # elif B_model_type == 'MHD':
-        #     self.B0_12 = P**0.5 * P_DOT**0.5 / (1 + np.sin(self.CHI)**2)
-        # elif B_model_type == 'USER':
-        #     self.B0_12 = USER_B
-        # else:
-        #     print('INCORRECT EVOLUTION MODEL')
-        #*********************************
         self.Lambda = 20 # free pass length Lambda parameter
         self.R = self.Rkm * 1e5
         #----------gravitational corretions----
-        self.epsGR = 3 * self.M_solar / self.R_km # gravitational corrections parametre
+        self.epsGR = 3 * self.M_solar / self.Rkm # gravitational corrections parametre
         self.KRc = 1 - 1/2 * self.epsGR        # General Reltivistic curvature radius (R_curv) correction
         self.KB = 1 + 3/4 * self.epsGR        # General Reltivistic magnetic field corrction
-        self.Kpsi = (1 - 0.24*(self.Ir/100) / (self.R_km/12)**3) / (1 - self.epsGR)      # General Reltivistic rho_GJ correction
+        self.Kpsi = (1 - 0.24*(self.Ir/100) / (self.Rkm/12)**3) / (1 - self.epsGR)      # General Reltivistic rho_GJ correction
         self.sR0 = 1 - 3/8 * self.epsGR        # General Reltivistic polar cap radius correction
         #---------------------------------------
         self.Omega = 2 * np.pi / self.P # pulsar angular velocity
@@ -47,12 +36,37 @@ class RadioPulsar():
         self.OmegaB = constants.qe * self.B_surf / constants.me / constants.c # synchrotron frequency on the polar cap surface in s^-1
         self.RLC = constants.c / self.Omega # light cylinder radius in cm
 
+    @classmethod
+    def from_file(cls, filename): 
+        with open(filename, mode="rt", encoding="utf-8") as fb:
+            contents = tomlkit.load(fb)
+            Name, P, B12, chi = contents['general']['Name'], contents['general']['P'], contents['general']['B12'], contents['general']['chi']
+            Rkm, M_solar, Ir = contents['mechanics']['Rs'], contents['mechanics']['M'], contents['mechanics']['Ir']
+        psr = RadioPulsar(Name, P, B12, chi, Rkm, M_solar, Ir)
+        return psr
 
-    def read_from_file(self, filename): # probabably make as an additional init
-        pass
-
-    def write_to_file(self, filename):
-        pass
+    def write_to_file(self, filename): 
+        toml_doc = tomlkit.document()
+        general = tomlkit.table()
+        general.add("Name", self.PSR_NAME)
+        general["Name"].comment("Pulsar Name")
+        general.add("P", self.P)
+        general["P"].comment("Rotation period in s")
+        general.add("B12", self.B_surf12)
+        general["B12"].comment("Magnetic filed on the polar cap, nomralized to 1e12 G")
+        general.add("chi", self.chi_deg)
+        general["chi"].comment("inclination angle in degrees")
+        mechanics = tomlkit.table()
+        mechanics.add("Rs", self.Rkm)
+        mechanics["Rs"].comment("Neutron star radius in km")
+        mechanics.add("M", self.M_solar)
+        mechanics["M"].comment("Neutron star mass in solar masses")
+        mechanics.add("Ir", self.Ir)
+        mechanics["Ir"].comment("Neutron star moment of inertia in Solar masses * km^2")
+        toml_doc.add("general", general)
+        toml_doc.add("mechanics", mechanics)
+        with open(filename+".toml", "w") as fp:
+            tomlkit.dump(toml_doc, fp)
 
     def Rc(self, r, units='cm'):
         """
