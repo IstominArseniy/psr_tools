@@ -68,25 +68,28 @@ class RadioPulsar():
         with open(filename+".toml", "w") as fp:
             tomlkit.dump(toml_doc, fp)
 
-    def Rc(self, r, units='cm'):
+    def Rc(self, x, r, units='cm'):
         """
-        curvature radius
+        x - position on polar cap (normalized to R0)
+        r - distance from the star (normalized to R)
+        units can be cm, R0 and R
+        return: curvature radius
         """
         EPS = self.R**2 / self.R0 / self.RLC
-        rc_cm =  self.KRc * 4/3 * self.R**2 / self.R0 / (r + EPS)
+        Rc_cm =  self.KRc * 4/3 * self.R**2 / self.R0 / (x + EPS) * np.sqrt(r)
         if units == 'cm':
-            return rc_cm
+            return Rc_cm
         elif units == 'R0':
-            return rc_cm / self.R0
+            return Rc_cm / self.R0
         elif units == 'R':
-            return rc_cm / self.R
+            return Rc_cm / self.R
         else:
-            print('Incorrect unit') # TODO make proper Raise Exeption
+            raise ValueError("Incorrect units name.")
 
     def hRS(self, r, phi, units='cm'):
         """
         Ruderman-Sutherlend height
-        units can be cm and R0 and R
+        units can be cm, R0 and R
         """
         cs=np.abs(np.cos(self.chi-1.5 * np.sin(phi) * np.sin(self.chi) * r * self.R0/ self.R ))
         h_cm = 1.1e2 * cs**(-3/7) * self.Rc(r, units='cm')**(2/7) * self.P**(3/7) / self.B_surf12**(4/7)
@@ -98,7 +101,43 @@ class RadioPulsar():
             return h_cm / self.R
         else:
             print('Incorrect unit') # TODO make proper Raise Exeption
-            
+    
+    def rhoGJ(self, x=0, phi=0):
+        return self.Omega *  self.B_surf * np.cos(self.chi) / 2 /np.pi / constants.c
+    
+    def B12(self, r):
+        """
+        magnetic field model
+        """
+        return self.PSR.B_surf12 * (1/r)**3
+    
+    def l_gamma(self, x, h, Eph, units='cm', approximation='coarse'):
+        r = 1 + h * self.R0 / self.R
+        if approximation == 'coarse':
+            return 8 / 3 / self.Lambda * constants.Bcr12 / self.B12(r) / Eph  * self.Rc(x, r, units=units)
+        elif approximation == 'fine':
+            pass
+        elif approximation == 'exact':
+            pass
+        else:
+            raise ValueError("Incorrect approximation type.")
+        
+    def x_absorption(self, x, h, Eph, units='cm', approximation='coarse'):
+        return x * (1 - 3/8 * self.l_gamma(x, h, Eph, units=units, approximation=approximation)**2) 
+    
+    def r_absorption(self, x, h, Eph, units='cm', approximation='coarse'):
+        ra_cm = h * self.R0 + self.R + self.l_gamma(x, h, Eph, units='cm', approximation=approximation)
+        if units == 'cm':
+            return ra_cm
+        elif units == 'R0':
+            return ra_cm / self.R0
+        elif units == 'R':
+            return ra_cm / self.R
+        else:
+            raise ValueError("Incorrect units name.")
+
+
+    
 
 class ObservedRadioPulsar(RadioPulsar):
     def __init__(self, PSR_NAME, P, Pdot, B12, chi_deg, beta_deg, freq=600, Rkm=12, M_solar=1.4, Ir=100):
