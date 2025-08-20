@@ -20,8 +20,8 @@ print(MeerKAT_channel_Profile.get_W50())
 print(MeerKAT_Profile.find_emission_mode(), MeerKAT_Profile.find_profile_type())
 MeerKAT_Profile.plot_profile(plot_polarisation=True, zoom=True)
 
-psr = interface.RadioPulsar('test_pulsar', 1, 1, 45)
+psr = interface.ObservedRadioPulsar('test_pulsar', 1, 1, 1, 45, 2, 600)
 psr.write_to_file('test_pulsar')
 
-new_psr = interface.RadioPulsar.from_file('test_pulsar.toml')
-print(new_psr.Ir)
+new_psr = interface.ObservedRadioPulsar.from_file('test_pulsar.toml')
+print(new_psr.freq)

@@ -42,7 +42,7 @@ class RadioPulsar():
             contents = tomlkit.load(fb)
             Name, P, B12, chi = contents['general']['Name'], contents['general']['P'], contents['general']['B12'], contents['general']['chi']
             Rkm, M_solar, Ir = contents['mechanics']['Rs'], contents['mechanics']['M'], contents['mechanics']['Ir']
-        psr = RadioPulsar(Name, P, B12, chi, Rkm, M_solar, Ir)
+        psr = cls(Name, P, B12, chi, Rkm, M_solar, Ir)
         return psr
 
     def write_to_file(self, filename): 
@@ -105,8 +105,8 @@ class ObservedRadioPulsar(RadioPulsar):
         super().__init__(PSR_NAME, P, B12, chi_deg, Rkm, M_solar, Ir)
         self.Pdot = Pdot # in 1e-15
         self.beta_deg = beta_deg # impact angle in degrees
-        self.beta = self.beta_def * np.pi / 180
-        self.freq = freq # observation frequency
+        self.beta = self.beta_deg * np.pi / 180
+        self.freq = freq # observation frequency in Mhz
 
     def set_model_B(self, model):
         if model == 'ATNF':
@@ -117,6 +117,45 @@ class ObservedRadioPulsar(RadioPulsar):
             self.B_surf12 = self.P**0.5 * self.Pdot**0.5 / (1 + np.sin(self.chi)**2)
         else:
             print('INCORRECT EVOLUTION MODEL') # TODO Proper raise exception
+
+    @classmethod
+    def from_file(cls, filename): 
+        with open(filename, mode="rt", encoding="utf-8") as fb:
+            contents = tomlkit.load(fb)
+            Name, P, Pdot, B12, chi, beta, freq = contents['general']['Name'], contents['general']['P'], contents['general']['Pdot'], \
+            contents['general']['B12'], contents['general']['chi'], contents['general']['beta'], contents['general']['frequency']
+            Rkm, M_solar, Ir = contents['mechanics']['Rs'], contents['mechanics']['M'], contents['mechanics']['Ir']
+        psr = cls(Name, P, Pdot, B12, chi, beta, freq, Rkm, M_solar, Ir)
+        return psr
+
+    def write_to_file(self, filename): 
+        toml_doc = tomlkit.document()
+        general = tomlkit.table()
+        general.add("Name", self.PSR_NAME)
+        general["Name"].comment("Pulsar Name")
+        general.add("P", self.P)
+        general["P"].comment("Rotation period in s")
+        general.add("Pdot", self.Pdot)
+        general["Pdot"].comment("Rotation period derivative in 1e-15")
+        general.add("B12", self.B_surf12)
+        general["B12"].comment("Magnetic filed on the polar cap, nomralized to 1e12 G")
+        general.add("chi", self.chi_deg)
+        general["chi"].comment("inclination angle in degrees")
+        general.add("beta", self.beta_deg)
+        general["beta"].comment("impact angle in degrees")
+        general.add("frequency", self.freq)
+        general["frequency"].comment("observational frequency in Mhz")
+        mechanics = tomlkit.table()
+        mechanics.add("Rs", self.Rkm)
+        mechanics["Rs"].comment("Neutron star radius in km")
+        mechanics.add("M", self.M_solar)
+        mechanics["M"].comment("Neutron star mass in solar masses")
+        mechanics.add("Ir", self.Ir)
+        mechanics["Ir"].comment("Neutron star moment of inertia in Solar masses * km^2")
+        toml_doc.add("general", general)
+        toml_doc.add("mechanics", mechanics)
+        with open(filename+".toml", "w") as fp:
+            tomlkit.dump(toml_doc, fp)
 
 
 class PSRutils:

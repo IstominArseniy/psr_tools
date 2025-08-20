@@ -1,8 +1,11 @@
 [general]
 Name = "test_pulsar" # Pulsar Name
 P = 1 # Rotation period in s
+Pdot = 1 # Rotation period derivative in 1e-15
 B12 = 1 # Magnetic filed on the polar cap, nomralized to 1e12 G
 chi = 45 # inclination angle in degrees
+beta = 2 # impact angle in degrees
+frequency = 600 # observational frequency in Mhz
 
 [mechanics]
 Rs = 12 # Neutron star radius in km
