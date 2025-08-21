@@ -14,3 +14,9 @@ def F_curavture(x):
 def F_curavture_exact(x):
     return x * integrate.quad(lambda t: special.kv(5/3, t), x, np.inf)[0]
 
+def is_float(value):
+  try:
+    float(value)
+    return True
+  except ValueError:
+    return False
