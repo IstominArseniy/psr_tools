@@ -45,7 +45,9 @@ class RadioPulsar():
         psr = cls(Name, P, B12, chi, Rkm, M_solar, Ir)
         return psr
 
-    def write_to_file(self, filename): 
+    def write_to_file(self, filename=None):
+        if filename is None:
+            filename = self.PSR_NAME 
         toml_doc = tomlkit.document()
         general = tomlkit.table()
         general.add("Name", self.PSR_NAME)
@@ -167,7 +169,9 @@ class ObservedRadioPulsar(RadioPulsar):
         psr = cls(Name, P, Pdot, B12, chi, beta, freq, Rkm, M_solar, Ir)
         return psr
 
-    def write_to_file(self, filename): 
+    def write_to_file(self, filename=None): 
+        if filename is None:
+            filename = self.PSR_NAME 
         toml_doc = tomlkit.document()
         general = tomlkit.table()
         general.add("Name", self.PSR_NAME)
@@ -197,58 +201,58 @@ class ObservedRadioPulsar(RadioPulsar):
             tomlkit.dump(toml_doc, fp)
 
 
-class PSRutils:
-    def __init__(self, PSR):
-        self.PSR = PSR
+# class PSRutils:
+#     def __init__(self, PSR):
+#         self.PSR = PSR
     
-    def B12(self, r):
-        """
-        magnetic field model
-        """
-        return self.PSR.B_surf12 * (1/r)**3
+#     def B12(self, r):
+#         """
+#         magnetic field model
+#         """
+#         return self.PSR.B_surf12 * (1/r)**3
 
-    def psi_inf(self, r, x):
-        return r/self.PSR.Rc(r, x, units='R')
+#     def psi_inf(self, r, x):
+#         return r/self.PSR.Rc(r, x, units='R')
 
-    def w(self, re, xe, r, E_ph):
-        """
-        pair production probability
-        E_ph should be normalized to m_e c^2
-        return: probability density (in w dl, dl expressed in R star)
-        """
-        if (r - re) / re < 1e-15:
-            return 0
-        psi = self.psi_inf(re, xe) * (1 - re/r)
-        return 0.23 * 1 / 137 / (constants.e_lambda_bar/self.PSR.R) * self.B12(r) / (constants.Bcr12) * psi * np.exp(-8/3 / E_ph * constants.Bcr12 / self.B12(r) / psi)
+#     def w(self, re, xe, r, E_ph):
+#         """
+#         pair production probability
+#         E_ph should be normalized to m_e c^2
+#         return: probability density (in w dl, dl expressed in R star)
+#         """
+#         if (r - re) / re < 1e-15:
+#             return 0
+#         psi = self.psi_inf(re, xe) * (1 - re/r)
+#         return 0.23 * 1 / 137 / (constants.e_lambda_bar/self.PSR.R) * self.B12(r) / (constants.Bcr12) * psi * np.exp(-8/3 / E_ph * constants.Bcr12 / self.B12(r) / psi)
 
-    def E_ph_min_exact(self, re, xe):
-        """
-        binary search computation of the minimal photon energy required to pair produce
-        """
-        E1 = 10
-        E2 = 1e8
-        while((E2 - E1) / E2 > 1e-3):
-            E = (E1 + E2)/2
-            tau_inf = integrate.quad(lambda h: self.w(re, xe, h, E), re, 100)[0]
-            if tau_inf > 1:
-                E2 = E
-            else:
-                E1 = E
-        return E 
+#     def E_ph_min_exact(self, re, xe):
+#         """
+#         binary search computation of the minimal photon energy required to pair produce
+#         """
+#         E1 = 10
+#         E2 = 1e8
+#         while((E2 - E1) / E2 > 1e-3):
+#             E = (E1 + E2)/2
+#             tau_inf = integrate.quad(lambda h: self.w(re, xe, h, E), re, 100)[0]
+#             if tau_inf > 1:
+#                 E2 = E
+#             else:
+#                 E1 = E
+#         return E 
     
-    def E_c(self, r, x, gamma_e):
-        """
-        curvature radiation characteristic energy
-        """
-        return 3 / 2 * (constants.e_lambda_bar / self.PSR.R) / self.PSR.Rc(r, x) * gamma_e**3
+#     def E_c(self, r, x, gamma_e):
+#         """
+#         curvature radiation characteristic energy
+#         """
+#         return 3 / 2 * (constants.e_lambda_bar / self.PSR.R) / self.PSR.Rc(r, x) * gamma_e**3
 
-    def n_curv(self, r, x, E_ph, gamma_e):
-        """
-        curvature radiation spectrum
-        dNph = n_curv * dE_ph * dh
-        """
-        if callable(gamma_e): # if gamma_e is a function of height (gamma = gamma(h))
-            return np.sqrt(3) / 2 / np.pi * constants.alpha_e / self.PSR.Rc(r, x) * gamma_e(r) * ufunc.F_curavture(E_ph/self.E_c(r, x, gamma_e(r))) / E_ph
-        else:
-            return np.sqrt(3) / 2 / np.pi * constants.alpha_e / self.PSR.Rc(r, x) * gamma_e * ufunc.F_curavture(E_ph/self.E_c(r, x, gamma_e)) / E_ph
+#     def n_curv(self, r, x, E_ph, gamma_e):
+#         """
+#         curvature radiation spectrum
+#         dNph = n_curv * dE_ph * dh
+#         """
+#         if callable(gamma_e): # if gamma_e is a function of height (gamma = gamma(h))
+#             return np.sqrt(3) / 2 / np.pi * constants.alpha_e / self.PSR.Rc(r, x) * gamma_e(r) * ufunc.F_curavture(E_ph/self.E_c(r, x, gamma_e(r))) / E_ph
+#         else:
+#             return np.sqrt(3) / 2 / np.pi * constants.alpha_e / self.PSR.Rc(r, x) * gamma_e * ufunc.F_curavture(E_ph/self.E_c(r, x, gamma_e)) / E_ph
         

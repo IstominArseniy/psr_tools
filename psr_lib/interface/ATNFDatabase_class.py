@@ -1,5 +1,6 @@
 import pandas as pd
 from ..utils.utils_funcs import is_float
+from .psr_class import RadioPulsar
 
 # class ATNFDatabase:
 #     def __init__(self, filename):
@@ -39,9 +40,15 @@ from ..utils.utils_funcs import is_float
 #         self.data = self.data.set_index('PSRJ')
 
 
-class ATNFDatabase(pd.DataFrame):
-    # def __init__(self):
-    #     pass
+class PSRDataFrame(pd.DataFrame):
+    @property
+    def _constructor(self):
+        return PSRDataFrame
+
+    @property
+    def _constructor_sliced(self):
+        return PSRSeries
+    
     @classmethod
     def from_ATNFdb(cls, filename): 
         lines = []
@@ -77,5 +84,23 @@ class ATNFDatabase(pd.DataFrame):
         DataBase['Edot'] = 3.95 * 1e31 * (DataBase['P1'] / 1e-15)/ DataBase['P0']**3
         DataBase['Eff'] = DataBase['L'] / DataBase['Edot']
         # set data table index to PSR J name
+        # DataBase.set_index('PSRJ', inplace=True)
         DataBase = DataBase.set_index('PSRJ')
         return DataBase
+    
+    def get_psr_class(self, Jname, skip_warning=False):
+        # def __init__(self, PSR_NAME, P, B12, chi_deg, Rkm=12, M_solar=1.4, Ir=100):
+        PSR = RadioPulsar(Jname, self.loc[Jname]['P0'], self.loc[Jname]['B12'], 45)
+        if not skip_warning:
+            print('No inclination angle, R, M, Ir information. Default values were assigned.')
+        return PSR
+    
+
+class PSRSeries(pd.Series):
+    @property
+    def _constructor(self):
+        return PSRSeries
+
+    @property
+    def _constructor_expanddim(self):
+        return PSRDataFrame
