@@ -20,6 +20,7 @@ class RadioPulsar():
         self.Rkm = Rkm
         self.M_solar = M_solar # in solar masses
         self.Ir = Ir # in Solar masses * km^2
+
         # ----------------Set derived parameters------------------------
         self.chi = chi_deg / 180 * np.pi
         self.Lambda = 20 # free pass length Lambda parameter
@@ -35,11 +36,12 @@ class RadioPulsar():
         self.R0 = self.sR0 * 1.25 * np.sqrt(1 + 0.2*(np.sin(self.chi))**2) * self.R * (self.Omega * self.R / constants.c)**0.5   # polar cap radius in cm
         self.OmegaB = constants.qe * self.B_surf / constants.me / constants.c # synchrotron frequency on the polar cap surface in s^-1
         self.RLC = constants.c / self.Omega # light cylinder radius in cm
+        self.val = 0.825
 
     @classmethod
     def from_file(cls, filename): 
         with open(filename, mode="rt", encoding="utf-8") as fb:
-            contents = tomlkit.load(fb)
+            contents = tomlkit.load(fb).unwrap()
             Name, P, B12, chi = contents['general']['Name'], contents['general']['P'], contents['general']['B12'], contents['general']['chi']
             Rkm, M_solar, Ir = contents['mechanics']['Rs'], contents['mechanics']['M'], contents['mechanics']['Ir']
         psr = cls(Name, P, B12, chi, Rkm, M_solar, Ir)
@@ -78,6 +80,7 @@ class RadioPulsar():
         return: curvature radius
         """
         EPS = self.R**2 / self.R0 / self.RLC
+        EPS=0
         Rc_cm =  self.KRc * 4/3 * self.R**2 / self.R0 / (x + EPS) * np.sqrt(r)
         if units == 'cm':
             return Rc_cm
@@ -107,11 +110,23 @@ class RadioPulsar():
     def rhoGJ(self, x=0, phi=0):
         return self.Omega *  self.B_surf * np.cos(self.chi) / 2 /np.pi / constants.c
     
+    def w(self, x_em, r_em, r, Eph):
+        """
+        pair production probability
+        Eph should be normalized to m_e c^2
+        return: probability density (in w dl, dl expressed in R star)
+        """
+        if (r - r_em) / r_em < 1e-15:
+            return 0
+        psi = self.psi_inf(x_em, r_em) * (1 - r_em/r)
+        return 0.23 * 1 / 137 / (constants.e_lambda_bar/self.R) * self.B12(r) / (constants.Bcr12) * psi * np.exp(-8/3 / Eph * constants.Bcr12 / self.B12(r) / psi)
+
+
     def B12(self, r):
         """
         magnetic field model
         """
-        return self.PSR.B_surf12 * (1/r)**3
+        return self.B_surf12 / r**3
     
     def l_gamma(self, x, h, Eph, units='cm', approximation='coarse'):
         r = 1 + h * self.R0 / self.R
@@ -137,9 +152,43 @@ class RadioPulsar():
             return ra_cm / self.R
         else:
             raise ValueError("Incorrect units name.")
-
-
     
+    def psi_inf(self, x, r):
+        return r / self.Rc(x, r, units='R')
+        
+    def Eph_min_exact(self, x, r):
+        """
+        binary search computation of the minimal photon energy required to pair produce
+        """
+        E1 = 10
+        E2 = 1e8
+        while((E2 - E1) / E2 > 1e-3):
+            E = (E1 + E2)/2
+            tau_inf = integrate.quad(lambda h: self.w(x, r, h, E), r, 100)[0] # upper limmit was 100 - need to be tested
+            if tau_inf > 1:
+                E2 = E
+            else:
+                E1 = E
+        return E 
+
+    def Ec(self, x, r, gamma_e):
+        """
+        curvature radiation characteristic energy
+        """
+        return 3 / 2 * (constants.e_lambda_bar / self.R) / self.Rc(x, r, units='R') * gamma_e**3
+    
+
+    def curvature_emission_denisty(self, x, r, Eph, gamma_e):
+        """
+        dNph = n_curv * dEph * dh
+        """
+        if callable(gamma_e):
+            return np.sqrt(3) / 2 / np.pi * constants.alpha_e / self.Rc(x, r, units='R') * gamma_e(r) * ufunc.F_curavture(Eph/self.Ec(x, r, gamma_e(r))) / Eph
+        else:
+            return np.sqrt(3) / 2 / np.pi * constants.alpha_e / self.Rc(x, r, units='R') * gamma_e * ufunc.F_curavture(Eph/self.Ec(x, r, gamma_e)) / Eph
+        
+    def curvature_multipliticy(self, x, gamma_e, tol=1e-2):
+        return integrate.dblquad(lambda Eph, r: self.curvature_emission_denisty(x, r, Eph, gamma_e), 1, 100, lambda r: self.Eph_min_exact(x, r), np.inf, epsrel=1e-2)[0]
 
 class ObservedRadioPulsar(RadioPulsar):
     def __init__(self, PSR_NAME, P, Pdot, B12, chi_deg, beta_deg, freq=600, Rkm=12, M_solar=1.4, Ir=100):
@@ -162,7 +211,7 @@ class ObservedRadioPulsar(RadioPulsar):
     @classmethod
     def from_file(cls, filename): 
         with open(filename, mode="rt", encoding="utf-8") as fb:
-            contents = tomlkit.load(fb)
+            contents = tomlkit.load(fb).unwrap()
             Name, P, Pdot, B12, chi, beta, freq = contents['general']['Name'], contents['general']['P'], contents['general']['Pdot'], \
             contents['general']['B12'], contents['general']['chi'], contents['general']['beta'], contents['general']['frequency']
             Rkm, M_solar, Ir = contents['mechanics']['Rs'], contents['mechanics']['M'], contents['mechanics']['Ir']
@@ -214,18 +263,18 @@ class ObservedRadioPulsar(RadioPulsar):
 #     def psi_inf(self, r, x):
 #         return r/self.PSR.Rc(r, x, units='R')
 
-#     def w(self, re, xe, r, E_ph):
+#     def w(self, re, xe, r, Eph):
 #         """
 #         pair production probability
-#         E_ph should be normalized to m_e c^2
+#         Eph should be normalized to m_e c^2
 #         return: probability density (in w dl, dl expressed in R star)
 #         """
 #         if (r - re) / re < 1e-15:
 #             return 0
 #         psi = self.psi_inf(re, xe) * (1 - re/r)
-#         return 0.23 * 1 / 137 / (constants.e_lambda_bar/self.PSR.R) * self.B12(r) / (constants.Bcr12) * psi * np.exp(-8/3 / E_ph * constants.Bcr12 / self.B12(r) / psi)
+#         return 0.23 * 1 / 137 / (constants.e_lambda_bar/self.PSR.R) * self.B12(r) / (constants.Bcr12) * psi * np.exp(-8/3 / Eph * constants.Bcr12 / self.B12(r) / psi)
 
-#     def E_ph_min_exact(self, re, xe):
+#     def Eph_min_exact(self, re, xe):
 #         """
 #         binary search computation of the minimal photon energy required to pair produce
 #         """
@@ -246,13 +295,13 @@ class ObservedRadioPulsar(RadioPulsar):
 #         """
 #         return 3 / 2 * (constants.e_lambda_bar / self.PSR.R) / self.PSR.Rc(r, x) * gamma_e**3
 
-#     def n_curv(self, r, x, E_ph, gamma_e):
+#     def n_curv(self, r, x, Eph, gamma_e):
 #         """
 #         curvature radiation spectrum
-#         dNph = n_curv * dE_ph * dh
+#         dNph = n_curv * dEph * dh
 #         """
 #         if callable(gamma_e): # if gamma_e is a function of height (gamma = gamma(h))
-#             return np.sqrt(3) / 2 / np.pi * constants.alpha_e / self.PSR.Rc(r, x) * gamma_e(r) * ufunc.F_curavture(E_ph/self.E_c(r, x, gamma_e(r))) / E_ph
+#             return np.sqrt(3) / 2 / np.pi * constants.alpha_e / self.PSR.Rc(r, x) * gamma_e(r) * ufunc.F_curavture(Eph/self.E_c(r, x, gamma_e(r))) / Eph
 #         else:
-#             return np.sqrt(3) / 2 / np.pi * constants.alpha_e / self.PSR.Rc(r, x) * gamma_e * ufunc.F_curavture(E_ph/self.E_c(r, x, gamma_e)) / E_ph
+#             return np.sqrt(3) / 2 / np.pi * constants.alpha_e / self.PSR.Rc(r, x) * gamma_e * ufunc.F_curavture(Eph/self.E_c(r, x, gamma_e)) / Eph
         

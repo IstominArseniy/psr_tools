@@ -1,9 +1,12 @@
 import numpy as np
 from matplotlib import pyplot as plt
-
+import tqdm
 from psr_lib.test_package import test_module
 from psr_lib import interface
+import time
 
-ATNF_db = interface.PSRDataFrame.from_ATNFdb('Data/psrcat.db')
-print(ATNF_db.loc['J0002+6216'])
-ATNF_db.get_psr_class('J0002+6216').write_to_file()
+psr = interface.RadioPulsar.from_file('test_pulsar.toml')
+t1 = time.time()
+M = psr.curvature_multipliticy(0.5, 3e7)
+t2 = time.time()
+print(M, t2-t1)

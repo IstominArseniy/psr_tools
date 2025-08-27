@@ -9,3 +9,4 @@ hbar = 1.055e-27 # reduced plank constant in erg * s
 Bcr = me**2 * c**3 / qe / hbar # Schwinger magnetic field in G.
 Bcr12 = me**2 * c**3 / qe / hbar / 1e12 # Schwinger magnetic field devided by 10^12 G.
 e_lambda_bar = hbar / me / c # electron compton wave-length in cm 
+alpha_e =  7.297e-3
