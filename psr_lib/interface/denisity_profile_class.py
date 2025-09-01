@@ -13,19 +13,24 @@ class DensityProfile1D:
         self.multiplicity = self._find_multiplicity()
 
     def show(self):
-        pass
+        fig, ax = plt.subplots()
+        xs = np.linspace(self.x_arr[0], self.x_arr[-1], 100)
+        ax.plot(xs, self.get_n(xs))
+        ax.scatter(self.x_arr, self.n_arr)
+        fig.show()
+        return fig, ax
 
     def _create_interpolation(self):
         return scipy.interpolate.make_interp_spline(self.x_arr, self.n_arr, k=1)
 
     def get_n(self, x, normalized=False):
-        if x >=0 and x <=1:
-            if not normalized:
-                return self.interpolant(x)
-            else:
-                return self.interpolant(x) / self.multiplicity
-        else:
+        x = np.array(x)
+        if np.any(x<0) or np.any(x>1):
             raise ValueError("x must be from 0 to 1.")
+        if not normalized:
+            return self.interpolant(x)
+        else:
+            return self.interpolant(x) / self.multiplicity
     
     def write_to_file(self, filename):
         pass
