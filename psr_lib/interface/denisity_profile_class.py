@@ -45,7 +45,7 @@ class DensityProfile1D:
     def _find_multiplicity(self):
         scipy.integrate.trapezoid(self.n_arr, self.x_arr)
 
-class DenistyProfile2D:
+class DensityProfile2D:
     def __init__(self, x_arr, phi_arr, n_arr):
         x_arr = np.array(x_arr)
         phi_arr = np.array(phi_arr)
@@ -62,7 +62,7 @@ class DenistyProfile2D:
         pass
 
     def get_n(self, x, phi):
-        return self.interpolant(x, phi)
+        return self.interpolant((x, phi))
 
     def get_1D_slice(self, phi, Npoints=None):
         if Npoints is None:
@@ -79,9 +79,8 @@ class DenistyProfile2D:
         with open (filename + '.json', 'w') as f:
             json.dump(tmp_dict, f)
 
-    def _create_interpolation(self):
-        x_grid, phi_grid = np.meshgrid(self.x_arr, self.phi_arr, indexing='ij')
-        return scipy.interpolate.RegularGridInterpolator((x_grid, phi_grid), self.n_arr, method='linear', bounds_error=False, fill_value=0)
+    def _create_interpolation(self): #TODO cyclic interpolation
+        return scipy.interpolate.RegularGridInterpolator((self.x_arr, self.phi_arr), self.n_arr, method='linear', bounds_error=False, fill_value=0)
     
     def _find_multiplicity(self):
-        pass
+        return scipy.integrate.trapezoid([scipy.integrate.trapezoid(n_arr_x_cut * self.x_arr, self.x_arr) for n_arr_x_cut in self.n_arr], self.phi_arr)
