@@ -2,6 +2,7 @@ import numpy as np
 import scipy.interpolate
 from matplotlib import pyplot as plt
 import json
+from ..utils import plotters
 
 class DensityProfile1D:
     def __init__(self, x_arr, n_arr):
@@ -59,7 +60,7 @@ class DensityProfile2D:
         self.multiplicity = self._find_multiplicity()
 
     def show(self):
-        pass
+        plotters.polar_plot(self.n_arr, self.x_arr, self.phi_arr)
 
     def get_n(self, x, phi):
         return self.interpolant((x, phi))
