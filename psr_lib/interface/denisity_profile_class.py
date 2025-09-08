@@ -14,11 +14,13 @@ class DensityProfile1D:
         self.interpolant = self._create_interpolation()
         self.multiplicity = self._find_multiplicity()
 
-    def show(self):
+    def show(self, file_name=None):
         fig, ax = plt.subplots()
         xs = np.linspace(self.x_arr[0], self.x_arr[-1], 100)
         ax.plot(xs, self.get_n(xs))
         ax.scatter(self.x_arr, self.n_arr)
+        if file_name is not None:
+            fig.savefig(file_name, dpi=400, bbox_inches='tight')        
         fig.show()
         return fig, ax
 
@@ -59,8 +61,8 @@ class DensityProfile2D:
         self.interpolant = self._create_interpolation()
         self.multiplicity = self._find_multiplicity()
 
-    def show(self):
-        plotters.polar_plot(self.n_arr, self.x_arr, self.phi_arr)
+    def show(self, file_name=None):
+        plotters.polar_plot(self.n_arr, self.x_arr, self.phi_arr, file_name=file_name)
 
     def get_n(self, x, phi):
         return self.interpolant((x, phi))

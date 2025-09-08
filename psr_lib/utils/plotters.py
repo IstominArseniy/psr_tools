@@ -27,6 +27,6 @@ def polar_plot(func, xs=None, phis=None, use_shading=False, file_name=None, labe
     else: 
         fig.colorbar(bar, ax=ax)
     if file_name is not None:
-        fig.savefig(file_name + '.png', dpi=400, bbox_inches='tight')
+        fig.savefig(file_name, dpi=400, bbox_inches='tight')
     fig.show()
     return fig, ax
