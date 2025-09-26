@@ -209,3 +209,9 @@ __marimo__/
 # Test files
 test.py
 test.ipynb
+
+# All .ipynb files 
+*.ipynb
+
+# All .png files
+*.png

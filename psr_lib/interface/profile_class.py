@@ -61,7 +61,7 @@ class PulsarProfile:
         profile.V = V
         profile.PA = PA
         profile.Q = profile.I * np.cos(profile.PA)
-        profile.V = profile.I * np.sin(profile.PA)
+        profile.U = profile.I * np.sin(profile.PA)
         return profile
     
     def get_Wa(self, a):
@@ -73,7 +73,7 @@ class PulsarProfile:
         # oversampling--------------------------------------------------
         phase = np.linspace(0, 1, self.Ncounts)
         phase_x100 = np.linspace(0, 1, 100 * self.Ncounts)
-        Is = scipy.interpolate.interp1d(phase, self.I)(phase_x100) # TODO test smoothed profile (as it was before)
+        Is = scipy.interpolate.interp1d(phase, self.get_smoothed_profile())(phase_x100) # TODO test smoothed profile (as it was before)
         #---------------------------------------------------------------
         try:
             left_ind = np.where(np.isclose(Is, height_a, rtol=5e-2))[0][0] # leftmost point on level a
