@@ -64,6 +64,54 @@ class PulsarProfile:
         profile.U = profile.I * np.sin(profile.PA)
         return profile
     
+    @classmethod
+    def from_LOKI_dat(cls, filename):
+        """
+        tmp method to read profile from .dat files of LOKI-pulsar-propagation program
+        """
+        phis = []
+        Is = []
+        Ls = []
+        Vs = []
+        PAs = []
+        with open(filename, 'r') as f:
+            lines = f.readlines()
+            for line in lines:
+                phi, I, V, PA = map(float, line.split(' '))
+                phis.append(phi)
+                Is.append(I)
+                Vs.append(V)
+                PAs.append(PA)    
+                Ls.append(np.sqrt(I**2 - V**2))
+        idx_sort = np.argsort(phis)
+        phis = np.array(phis)[idx_sort]
+        Is = np.array(Is)[idx_sort]
+        Ls = np.array(Ls)[idx_sort]
+        Vs = np.array(Vs)[idx_sort]
+        PAs = np.array(PAs)[idx_sort]
+        #------------- padding with zeros on sides ----------
+        d_phi = phis[1] - phis[0]
+        Ncounts_target = np.round(360 / d_phi) + 1
+        Ncounts_current = Is.shape[0]
+        pad = np.zeros(int((Ncounts_target - Ncounts_current)/2))
+        Is = np.concatenate((pad, Is, pad))
+        Ls = np.concatenate((pad, Ls, pad))
+        Vs = np.concatenate((pad, Vs, pad))
+        PAs = np.concatenate((pad, PAs, pad))
+        #----------------------------------------------------
+
+        if (Is.shape[0] != Ls.shape[0] or Is.shape[0] != Vs.shape[0] or Is.shape[0] != PAs.shape[0]):
+            raise ValueError("I, L, V, PA arrays must have the same length.")
+        Ncounts = Is.shape[0]
+        profile = cls(Ncounts)
+        profile.I = Is
+        profile.L = Ls
+        profile.V = Vs
+        profile.PA = PAs
+        profile.Q = profile.I * np.cos(profile.PA)
+        profile.U = profile.I * np.sin(profile.PA)
+        return profile
+    
     def get_Wa(self, a):
         """
         params: a - level (from 0 to 100 %)
@@ -76,8 +124,8 @@ class PulsarProfile:
         Is = scipy.interpolate.interp1d(phase, self.get_smoothed_profile())(phase_x100) # TODO test smoothed profile (as it was before)
         #---------------------------------------------------------------
         try:
-            left_ind = np.where(np.isclose(Is, height_a, rtol=5e-2))[0][0] # leftmost point on level a
-            right_ind = np.where(np.isclose(Is, height_a, rtol=5e-2))[0][-1] #rightmost point on level a
+            left_ind = np.where(np.isclose(Is, height_a, rtol=5e-2, atol=0))[0][0] # leftmost point on level a
+            right_ind = np.where(np.isclose(Is, height_a, rtol=5e-2, atol=0))[0][-1] #rightmost point on level a
         except:
             return np.nan
         return 360 * (right_ind - left_ind) / 100 / self.Ncounts
