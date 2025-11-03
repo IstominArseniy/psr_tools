@@ -73,8 +73,8 @@ class PulsarProfile:
         profile.L = L
         profile.V = V
         profile.PA = PA
-        profile.Q = profile.I * np.cos(profile.PA)
-        profile.U = profile.I * np.sin(profile.PA)
+        profile.Q = profile.I * np.cos(profile.PA * np.pi / 180)
+        profile.U = profile.I * np.sin(profile.PA * np.pi / 180)
         return profile
     
     @classmethod
@@ -125,8 +125,8 @@ class PulsarProfile:
         profile.L = Ls
         profile.V = Vs
         profile.PA = PAs
-        profile.Q = profile.I * np.cos(profile.PA)
-        profile.U = profile.I * np.sin(profile.PA)
+        profile.Q = profile.I * np.cos(profile.PA * np.pi / 180)
+        profile.U = profile.I * np.sin(profile.PA * np.pi / 180)
         return profile
     
     @staticmethod
