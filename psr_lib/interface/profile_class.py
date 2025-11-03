@@ -22,14 +22,21 @@ class PulsarProfile:
         self.PA = np.zeros(Ncounts)
 
     @classmethod
-    def from_IQUV(cls, I, Q, U, V):
+    def from_IQUV(cls, I, Q, U, V, d_phi=None):
         """
         initialize profile class using Stocks parameters in order: I, Q, U, V
+        d_phi can be provided if phases do not span 360 degrees. In this case profile I, Q, U, V are padded with zeros.
         """
         I = np.array(I)
         Q = np.array(Q)
         U = np.array(U)
         V = np.array(V)
+        if d_phi is not None:
+            I = PulsarProfile._pad_arr_with_zeros(I, d_phi)
+            Q = PulsarProfile._pad_arr_with_zeros(Q, d_phi)
+            U = PulsarProfile._pad_arr_with_zeros(U, d_phi)
+            V = PulsarProfile._pad_arr_with_zeros(V, d_phi)
+
         if (I.shape[0] != Q.shape[0] or I.shape[0] != U.shape[0] or I.shape[0] != V.shape[0]):
             raise ValueError("I, Q, U, V arrays must have the same length.")
         Ncounts = I.shape[0]
@@ -44,14 +51,20 @@ class PulsarProfile:
         return profile
 
     @classmethod
-    def from_ILVPA(cls, I, L, V, PA):
+    def from_ILVPA(cls, I, L, V, PA, d_phi=None):
         """
         initialize profile class using I, L, V, PA
+        d_phi can be provided if phases do not span 360 degrees. In this case profile I, L, V, are padded with zeros and PA with Nans
         """
         I = np.array(I)
         L = np.array(L)
         V = np.array(V)
         PA = np.array(PA)
+        if d_phi is not None:
+            I = PulsarProfile._pad_arr_with_zeros(I, d_phi)
+            L = PulsarProfile._pad_arr_with_zeros(L, d_phi)
+            V = PulsarProfile._pad_arr_with_zeros(V, d_phi)
+            PA = PulsarProfile._pad_arr_with_zeros(PA, d_phi)
         if (I.shape[0] != L.shape[0] or I.shape[0] != V.shape[0] or I.shape[0] != PA.shape[0]):
             raise ValueError("I, L, V, PA arrays must have the same length.")
         Ncounts = I.shape[0]
@@ -91,13 +104,17 @@ class PulsarProfile:
         PAs = np.array(PAs)[idx_sort]
         #------------- padding with zeros on sides ----------
         d_phi = phis[1] - phis[0]
-        Ncounts_target = np.round(360 / d_phi) + 1
-        Ncounts_current = Is.shape[0]
-        pad = np.zeros(int((Ncounts_target - Ncounts_current)/2))
-        Is = np.concatenate((pad, Is, pad))
-        Ls = np.concatenate((pad, Ls, pad))
-        Vs = np.concatenate((pad, Vs, pad))
-        PAs = np.concatenate((pad, PAs, pad))
+        # Ncounts_target = np.round(360 / d_phi) + 1
+        # Ncounts_current = Is.shape[0]
+        # pad = np.zeros(int((Ncounts_target - Ncounts_current)/2))
+        # Is = np.concatenate((pad, Is, pad))
+        # Ls = np.concatenate((pad, Ls, pad))
+        # Vs = np.concatenate((pad, Vs, pad))
+        # PAs = np.concatenate((pad, PAs, pad))
+        Is = PulsarProfile._pad_arr_with_zeros(Is, d_phi)
+        Ls = PulsarProfile._pad_arr_with_zeros(Ls, d_phi)
+        Vs = PulsarProfile._pad_arr_with_zeros(Vs, d_phi)
+        PAs = PulsarProfile._pad_arr_with_zeros(PAs, d_phi)
         #----------------------------------------------------
 
         if (Is.shape[0] != Ls.shape[0] or Is.shape[0] != Vs.shape[0] or Is.shape[0] != PAs.shape[0]):
@@ -111,6 +128,23 @@ class PulsarProfile:
         profile.Q = profile.I * np.cos(profile.PA)
         profile.U = profile.I * np.sin(profile.PA)
         return profile
+    
+    @staticmethod
+    def _pad_arr_with_zeros(arr, d_phi):
+        Ncounts_target = np.round(360 / d_phi) + 1
+        Ncounts_current = arr.shape[0]
+        pad = np.zeros(int((Ncounts_target - Ncounts_current)/2))
+        arr = np.concatenate((pad, arr, pad))
+        return arr
+    
+    @staticmethod
+    def _pad_arr_with_nans(arr, d_phi):
+        Ncounts_target = np.round(360 / d_phi) + 1
+        Ncounts_current = arr.shape[0]
+        pad = np.zeros(int((Ncounts_target - Ncounts_current)/2), dtype=np.float32)
+        pad.fill(np.nan)
+        arr = np.concatenate((pad, arr, pad))
+        return arr
     
     def get_Wa(self, a):
         """
