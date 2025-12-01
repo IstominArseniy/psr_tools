@@ -31,10 +31,9 @@ def read_from_ATNF_DB(file_name):
         DataBase['B12'] = (DataBase['P0'] * DataBase['P1'] * 1e15)**0.5
         DataBase['AGE'] = DataBase['P0'] / DataBase['P1'] / 2
         DataBase['Q'] = DataBase['P0']**(5/7) / (DataBase['P1']*1e15)**(2/7)
-        DataBase['L1400'] = DataBase['S1400'] * DataBase['DIST_DM']**2
-        DataBase['L'] = 7.4e27 * DataBase['L1400']
+        DataBase['L1400'] = 7.4e27 * DataBase['S1400'] * DataBase['DIST_DM']**2
         DataBase['Edot'] = 3.95 * 1e31 * (DataBase['P1'] / 1e-15)/ DataBase['P0']**3
-        DataBase['Eff'] = DataBase['L'] / DataBase['Edot']
+        DataBase['Eff'] = DataBase['L1400'] / DataBase['Edot']
         # set data table index to PSR J name
         DataBase = DataBase.set_index('PSRJ')
         return DataBase

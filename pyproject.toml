@@ -1,5 +1,5 @@
 [build-system]
-requires = ["hatchling >= 1.26"]
+requires = ["hatchling >= 1.26, astropy >= 7.1.0, tomlkit >= 0.13.3, tqdm >= 4.67.1"]
 build-backend = "hatchling.build"
 [project]
 name = "psr_lib"

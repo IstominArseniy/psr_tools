@@ -215,3 +215,15 @@ test.ipynb
 
 # All .png files
 *.png
+
+# Pictures folders
+Pics/
+pics/
+
+# Scripts and tests folders
+psr_lib/scripts_and_tests/
+scripts/
+tests/
+
+#tmp
+Mode_determination_quality_script.py

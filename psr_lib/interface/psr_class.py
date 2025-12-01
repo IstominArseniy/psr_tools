@@ -72,10 +72,21 @@ class RadioPulsar():
         with open(filename+".toml", "w") as fp:
             tomlkit.dump(toml_doc, fp)
 
+    def get_half_opening_angle(self, Rem, units='rad'):
+        angle = 3/2* np.sqrt(Rem) * self.R0/self.R
+        if units == 'rad':
+            return angle
+        elif units == 'deg':
+            return angle * 180 / np.pi
+        else:
+            raise ValueError("Incorrect units name.")
+
+
+
     def Rc(self, x, r, units='cm'):
         """
         x - position on polar cap (normalized to R0)
-        r - distance from the star (normalized to R)
+        r - distance from the star center (normalized to R)
         units can be cm, R0 and R
         return: curvature radius
         """

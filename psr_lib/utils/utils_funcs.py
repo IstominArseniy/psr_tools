@@ -1,4 +1,5 @@
 from scipy import integrate
+from scipy import interpolate
 from scipy import special
 import numpy as np
 
@@ -20,3 +21,11 @@ def is_float(value):
     return True
   except ValueError:
     return False
+  
+
+def inverse_sample_function(dist, Npnts, x_min=-100, x_max=100, n=1e6, **kwargs):
+  x = np.linspace(x_min, x_max, int(n))
+  cumulative = np.cumsum(dist(x, **kwargs)) 
+  cumulative -= cumulative.min()
+  f = interpolate.interp1d(cumulative/cumulative.max(), x)
+  return f(np.random.random(int(Npnts)))

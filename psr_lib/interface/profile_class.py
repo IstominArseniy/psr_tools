@@ -22,7 +22,7 @@ class PulsarProfile:
         self.PA = np.zeros(Ncounts)
 
     @classmethod
-    def from_IQUV(cls, I, Q, U, V, d_phi=None):
+    def from_IQUV(cls, I, Q, U, V, d_phi=None, normalize=True):
         """
         initialize profile class using Stocks parameters in order: I, Q, U, V
         d_phi can be provided if phases do not span 360 degrees. In this case profile I, Q, U, V are padded with zeros.
@@ -45,13 +45,19 @@ class PulsarProfile:
         profile.Q = Q
         profile.U = U
         profile.V = V
+        if normalize:
+            Imax = np.max(profile.I)
+            profile.I /= Imax
+            profile.Q /= Imax
+            profile.U /= Imax
+            profile.V /= Imax
         profile.L = np.sqrt(Q**2 + U**2)
         profile.L -= processing.noise_mean(profile.L)
         profile.PA = processing.shift_angle(0.5 * np.arctan2(Q, U)) * 180 /np.pi
         return profile
 
     @classmethod
-    def from_ILVPA(cls, I, L, V, PA, d_phi=None):
+    def from_ILVPA(cls, I, L, V, PA, d_phi=None, normalize=True):
         """
         initialize profile class using I, L, V, PA
         d_phi can be provided if phases do not span 360 degrees. In this case profile I, L, V, are padded with zeros and PA with Nans
@@ -73,12 +79,17 @@ class PulsarProfile:
         profile.L = L
         profile.V = V
         profile.PA = PA
+        if normalize:
+            Imax = np.max(profile.I)
+            profile.I /= Imax
+            profile.L /= Imax
+            profile.V /= Imax
         profile.Q = profile.I * np.cos(profile.PA * np.pi / 180)
         profile.U = profile.I * np.sin(profile.PA * np.pi / 180)
         return profile
     
     @classmethod
-    def from_LOKI_dat(cls, filename):
+    def from_LOKI_dat(cls, filename, normalize=True):
         """
         tmp method to read profile from .dat files of LOKI-pulsar-propagation program
         """
@@ -102,6 +113,7 @@ class PulsarProfile:
         Ls = np.array(Ls)[idx_sort]
         Vs = np.array(Vs)[idx_sort]
         PAs = np.array(PAs)[idx_sort]
+        
         #------------- padding with zeros on sides ----------
         d_phi = phis[1] - phis[0]
         # Ncounts_target = np.round(360 / d_phi) + 1
@@ -116,7 +128,6 @@ class PulsarProfile:
         Vs = PulsarProfile._pad_arr_with_zeros(Vs, d_phi)
         PAs = PulsarProfile._pad_arr_with_zeros(PAs, d_phi)
         #----------------------------------------------------
-
         if (Is.shape[0] != Ls.shape[0] or Is.shape[0] != Vs.shape[0] or Is.shape[0] != PAs.shape[0]):
             raise ValueError("I, L, V, PA arrays must have the same length.")
         Ncounts = Is.shape[0]
@@ -125,6 +136,11 @@ class PulsarProfile:
         profile.L = Ls
         profile.V = Vs
         profile.PA = PAs
+        if normalize:
+            Imax = np.max(profile.I)
+            profile.I /= Imax
+            profile.L /= Imax
+            profile.V /= Imax
         profile.Q = profile.I * np.cos(profile.PA * np.pi / 180)
         profile.U = profile.I * np.sin(profile.PA * np.pi / 180)
         return profile
@@ -199,7 +215,7 @@ class PulsarProfile:
     def find_emission_mode(self, boarder_value=0.4):
         left_ind, right_ind = self.get_level_bounds(10)
         Vs = self.V[left_ind:right_ind]
-        PAs = self.PA[left_ind:right_ind]
+        PAs = processing.shift_angle(self.PA[left_ind:right_ind]*np.pi/180)*180/np.pi
         Imax = np.max(self.I)
         Is = self.I[left_ind:right_ind] / Imax
         Ls = self.L[left_ind:right_ind] / Imax
@@ -281,7 +297,7 @@ class PulsarProfile:
         PAs = self.PA[left_ind : right_ind + 1]
         quality_L_array = ((Ls / (np.abs(Is) + 0.01 * np.max(Is))) > 0.1) & (Is > 4 * noise)
         axs[0].set_xlim(left_ind / self.Ncounts, (right_ind + 1)/self.Ncounts)
-        axs[0].scatter(phase_arr[quality_L_array], PAs[quality_L_array], c='black', s=3)
+        axs[0].scatter(phase_arr[quality_L_array], processing.shift_angle(PAs[quality_L_array] * np.pi/180)*180/np.pi, c='black', s=3)
         axs[1].plot(phase_arr, Is, c='black', label='I', linewidth=1)
         if plot_polarisation == True:
             axs[1].plot(phase_arr, Vs, c='blue', label='V')
