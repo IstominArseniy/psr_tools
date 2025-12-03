@@ -33,7 +33,9 @@ class RadioPulsar():
         self.sR0 = 1 - 3/8 * self.epsGR        # General Reltivistic polar cap radius correction
         #---------------------------------------
         self.Omega = 2 * np.pi / self.P # pulsar angular velocity
-        self.R0 = self.sR0 * 1.25 * np.sqrt(1 + 0.2*(np.sin(self.chi))**2) * self.R * (self.Omega * self.R / constants.c)**0.5   # polar cap radius in cm
+        # self.R0 = self.sR0 * 1.25 * np.sqrt(1 + 0.2*(np.sin(self.chi))**2) * self.R * (self.Omega * self.R / constants.c)**0.5   # polar cap radius in cm
+        self.R0 = self.R * (self.Omega * self.R / constants.c)**0.5   # polar cap radius in cm (simplified version)
+
         self.OmegaB = constants.qe * self.B_surf / constants.me / constants.c # synchrotron frequency on the polar cap surface in s^-1
         self.RLC = constants.c / self.Omega # light cylinder radius in cm
         self.val = 0.825
@@ -208,6 +210,14 @@ class ObservedRadioPulsar(RadioPulsar):
         self.beta_deg = beta_deg # impact angle in degrees
         self.beta = self.beta_deg * np.pi / 180
         self.freq = freq # observation frequency in Mhz
+
+    def set_beta(self, new_beta_deg):
+        self.beta_deg = new_beta_deg
+        self.beta = self.beta_deg*np.pi/180
+
+    def set_chi(self, new_chi_deg):
+        self.chi_deg = new_chi_deg
+        self.chi = self.chi_deg*np.pi/180
 
     def set_model_B(self, model):
         if model == 'ATNF':

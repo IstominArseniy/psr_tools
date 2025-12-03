@@ -39,7 +39,7 @@ class ProfileCalculator:
         res = []
         # with Pool(10) as pool:
             # res = pool.starmap(ProfileCalculator._worker, zip(itertools.repeat(self.profile_calculator), phi_arr, mode_arr))
-        res = list(map(lambda phi: self.profile_calculator.find_ILVPA(phi, mode, True), phi_arr))
+        res = list(map(lambda phi: self.profile_calculator.find_ILVPA(phi, mode, False), phi_arr))
         Is = []
         Ls = []
         Vs = []
