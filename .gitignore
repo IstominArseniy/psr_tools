@@ -210,6 +210,9 @@ __marimo__/
 test.py
 test.ipynb
 
+# Data folder
+Data/
+
 # All .ipynb files 
 *.ipynb
 
