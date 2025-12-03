@@ -1,226 +1,0 @@
-SIMPLE  =                    T / file does conform to FITS standard             BITPIX  =                    8 / number of bits per data pixel                  NAXIS   =                    0 / number of data axes                            EXTEND  =                    T / FITS dataset may contain extensions            COMMENT   FITS (Flexible Image Transport System) format is defined in 'AstronomyCOMMENT   and Astrophysics', volume 376, page 359; bibcode: 2001A&A...376..359H COMMENT   FITS (Flexible Image Transport System) format defined in Astronomy andCOMMENT   Astrophysics Supplement Series v44/p363, v44/p371, v73/p359, v73/p365.COMMENT   Contact the NASA Science Office of Standards and Technology for the   COMMENT   FITS Definition document #100 and other FITS information.             HDRVER  = '6.7             '   / Header version                                 FITSTYPE= 'PSRFITS         '   / FITS definition for pulsar data files          DATE    = '2023-09-13T14:50:45' / File creation date (YYYY-MM-DDThh:mm:ss UTC)  OBSERVER= '                '   / Observer name(s)                               PROJID  = '                '   / Project name                                   TELESCOP= '3       '           / Telescope name                                 ANT_X   = '*       '           / [m] Antenna ITRF X-coordinate (D)              ANT_Y   = '*       '           / [m] Antenna ITRF Y-coordinate (D)              ANT_Z   = '*       '           / [m] Antenna ITRF Z-coordinate (D)              FRONTEND= '                '   / Receiver ID                                    IBEAM   = '        '           / Beam ID for multibeam systems                  NRCVR   = '*       '           / Number of receiver polarisation channels       FD_POLN = '                '   / LIN or CIRC                                    FD_HAND = '*       '           / +/- 1. +1 is LIN:A=X,B=Y, CIRC:A=L,B=R (I)     FD_SANG = '*       '           / [deg] FA of E vect for equal sig in A&B (E)    FD_XYPH = '*       '           / [deg] Phase of A^* B for injected cal (E)      BACKEND = '                '   / Backend ID                                     BECONFIG= '                '   / Backend configuration file name                BE_PHASE= '*       '           / 0/+1/-1 BE cross-phase:0 unknown,+/-1 std/rev  BE_DCC  = '*       '           / 0/1 BE downconversion conjugation corrected    BE_DELAY= '*       '           / [s] Backend propn delay from digitiser input   TCYCLE  = '*       '           / [s] On-line cycle time (D)                     OBS_MODE= 'PSR     '           / (PSR, CAL, SEARCH)                             DATE-OBS= 'UNSETTUNSET'        / Date of observation (YYYY-MM-DDThh:mm:ss UTC)  OBSFREQ =               1392.5 / [MHz] Centre frequency for observation         OBSBW   =                   0. / [MHz] Bandwidth for observation                OBSNCHAN=                    1 / Number of frequency channels (original)        CHAN_DM = '*       '           / [cm-3 pc] DM used for on-line dedispersion     PNT_ID  = '        '           / Name or ID for pointing ctr (multibeam feeds)  SRC_NAME= 'J1913+3732'         / Source or scan ID                              COORD_MD= 'J2000   '           / Coordinate mode (J2000, GALACTIC, ECLIPTIC)    EQUINOX =                2000. / Equinox of coords (e.g. 2000.0)                RA      = '00:00:00.000'       / Right ascension (hh:mm:ss.ssss)                DEC     = '+00:00:00.000'      / Declination (-dd:mm:ss.sss)                    BMAJ    =                   0. / [deg] Beam major axis length                   BMIN    =                   0. / [deg] Beam minor axis length                   BPA     =                   0. / [deg] Beam position angle                      STT_CRD1= '00:00:00.000'       / Start coord 1 (hh:mm:ss.sss or ddd.ddd)        STT_CRD2= '+00:00:00.000'      / Start coord 2 (-dd:mm:ss.sss or -dd.ddd)       TRK_MODE= 'UNSET   '           / Track mode (TRACK, SCANGC, SCANLAT)            STP_CRD1= 'UNSET   '           / Stop coord 1 (hh:mm:ss.sss or ddd.ddd)         STP_CRD2= 'UNSET   '           / Stop coord 2 (-dd:mm:ss.sss or -dd.ddd)        SCANLEN = '*       '           / [s] Requested scan length (E)                  FD_MODE = '                '   / Feed track mode - FA, CPA, SPA, TPA            FA_REQ  = '*       '           / [deg] Feed/Posn angle requested (E)            CAL_MODE= '                '   / Cal mode (OFF, SYNC, EXT1, EXT2)               CAL_FREQ= '*       '           / [Hz] Cal modulation frequency (E)              CAL_DCYC= '*       '           / Cal duty cycle (E)                             CAL_PHS = '*       '           / Cal phase (wrt start time) (E)                 CAL_NPHS= '*       '           / Number of states in cal pulse (I)              STT_IMJD=                58300 / Start MJD (UTC days) (J - long integer)        STT_SMJD=                17527 / [s] Start time (sec past UTC 00h) (J)          STT_OFFS= 2.99998646369203E-07 / [s] Start time offset (D)                      STT_LST =                   0. / [s] Start LST (D)                              END                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             XTENSION= 'BINTABLE'           / ***** Processing history *****                 BITPIX  =                    8 / N/A                                            NAXIS   =                    2 / 2-dimensional binary table                     NAXIS1  =                  820 / width of table in bytes                        NAXIS2  =                    1 / number of rows                                 PCOUNT  =                    0 / size of special data area                      GCOUNT  =                    1 / one data group (required keyword)              TFIELDS =                   29 / number of fields per row                       TTYPE1  = 'DATE_PRO'           / Processing date and time (UTC)                 TFORM1  = '24A     '           / 24-char string                                 TTYPE2  = 'PROC_CMD'           / Processing program and command                 TFORM2  = '256A    '           / 256-char string                                TTYPE3  = 'SCALE   '           / Units (FluxDen/RefFlux/Jansky)                 TFORM3  = '8A      '           / 8-char string                                  TTYPE4  = 'POL_TYPE'           / Polarisation identifier                        TFORM4  = '8A      '           / 8-char string                                  TTYPE5  = 'NSUB    '           / Number of Sub-Integrations                     TFORM5  = '1J      '           / Long integer                                   TTYPE6  = 'NPOL    '           / Number of polarisations                        TFORM6  = '1I      '           / Integer                                        TTYPE7  = 'NBIN    '           / Nr of bins per product (0 for SEARCH mode)     TFORM7  = '1I      '           / Integer                                        TTYPE8  = 'NBIN_PRD'           / Nr of bins per period                          TFORM8  = '1I      '           / Integer                                        TTYPE9  = 'TBIN    '           / Time per bin or sample                         TFORM9  = '1D      '           / Double                                         TTYPE10 = 'CTR_FREQ'           / Band centre frequency (weighted)               TFORM10 = '1D      '           / Double                                         TTYPE11 = 'NCHAN   '           / Number of frequency channels                   TFORM11 = '1J      '           / Long integer                                   TTYPE12 = 'CHAN_BW '           / Channel bandwidth                              TFORM12 = '1D      '           / Double                                         TTYPE13 = 'REF_FREQ'           / Reference frequency                            TFORM13 = '1D      '           / Double                                         TTYPE14 = 'DM      '           / DM used for dedispersion                       TFORM14 = '1D      '           / Double                                         TTYPE15 = 'RM      '           / RM used for RM correction                      TFORM15 = '1D      '           / Double                                         TTYPE16 = 'PR_CORR '           / Projection of receptors onto sky corrected     TFORM16 = '1I      '           / Integer flag                                   TTYPE17 = 'FD_CORR '           / Feed basis correction applied                  TFORM17 = '1I      '           / Integer flag                                   TTYPE18 = 'BE_CORR '           / Backend correction applied                     TFORM18 = '1I      '           / Integer flag                                   TTYPE19 = 'RM_CORR '           / RM correction applied                          TFORM19 = '1I      '           / Integer flag                                   TTYPE20 = 'DEDISP  '           / Data dedispersed                               TFORM20 = '1I      '           / Integer flag                                   TTYPE21 = 'DDS_MTHD'           / Dedispersion method                            TFORM21 = '32A     '           / 32-char string                                 TTYPE22 = 'SC_MTHD '           / Scattered power correction method              TFORM22 = '32A     '           / 32-char string                                 TTYPE23 = 'CAL_MTHD'           / Calibration method                             TFORM23 = '32A     '           / 32-char string                                 TTYPE24 = 'CAL_FILE'           / Name of gain calibration file                  TFORM24 = '256A    '           / 256-char string                                TTYPE25 = 'RFI_MTHD'           / RFI excision method                            TFORM25 = '32A     '           / 32-char string                                 TTYPE26 = 'RM_MODEL'           / Auxiliary Faraday rotation model description   TFORM26 = '32A     '           / 32-char string                                 TTYPE27 = 'AUX_RM_C'           / Auxiliary Faraday rotation corrected flag      TFORM27 = '1I      '           / Integer flag                                   TTYPE28 = 'DM_MODEL'           / Auxiliary dispersion model description         TFORM28 = '32A     '           / 32-char string                                 TTYPE29 = 'AUX_DM_C'           / Auxiliary dispersion corrected flag            TFORM29 = '1I      '           / Integer flag                                   EXTNAME = 'HISTORY '           / name of this binary table extension            TUNIT9  = 's       '           / units of field                                 TUNIT10 = 'MHz     '           / units of field                                 TUNIT12 = 'MHz     '           / units of field                                 TUNIT13 = 'MHz     '           / units of field                                 TUNIT14 = 'CM-3    '                                                            TUNIT15 = 'RAD     '                                                            EXTVER  =                    1 / auto assigned by template parser               END                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             Wed Sep 13 15:50:45 2023UNKNOWN                                                                                                                                                                                                                                                         FluxDen IQUV        ?K5OñtO@•Â                        @u@     ?É™™™™™š        UNSET                           NONE                            NONE                            NONE                                                                                                                                                                                                                                                            NONE                            NONE                              NONE                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          XTENSION= 'BINTABLE'           / ***** Subintegration data  *****               BITPIX  =                    8 / N/A                                            NAXIS   =                    2 / 2-dimensional binary table                     NAXIS1  =                 8292 / width of table in bytes                        NAXIS2  =                    1 / Number of rows in table (NSUBINT)              PCOUNT  =                    0 / size of special data area                      GCOUNT  =                    1 / one data group (required keyword)              TFIELDS =                   11 / Number of fields per row                       TTYPE1  = 'INDEXVAL'           / Optionally used if INT_TYPE != TIME            TFORM1  = '1D      '           / Double                                         TTYPE2  = 'TSUBINT '           / Length of subintegration                       TFORM2  = '1D      '           / Double                                         TTYPE3  = 'OFFS_SUB'           / Offset from Start of subint centre             TFORM3  = '1D      '           / Double                                         TTYPE5  = 'AUX_DM  '           / additional DM (ionosphere, corona, etc.)       TFORM5  = '1D      '           / Double                                         TTYPE6  = 'AUX_RM  '           / additional RM (ionosphere, corona, etc.)       TFORM6  = '1D      '           / Double                                         TTYPE7  = 'DAT_FREQ'           / [MHz] Centre frequency for each channel        TFORM7  = 'D       '           / NCHAN doubles                                  TTYPE8  = 'DAT_WTS '           / Weights for each channel                       TFORM8  = 'E       '           / NCHAN floats                                   TTYPE9  = 'DAT_OFFS'           / Data offset for each channel                   TFORM9  = '4E      '           / NCHAN*NPOL floats                              TTYPE10 = 'DAT_SCL '           / Data scale factor (outval=dataval*scl + offs)  TFORM10 = '4E      '           / NCHAN*NPOL floats                              TTYPE11 = 'DATA    '           / Subint data table                              TFORM11 = '4100I   '           / I (Fold) or B (1-8 bit) Search                 EPOCHS  = 'VALID   '           / Epoch convention (VALID, MIDTIME, STT_MJD)     INT_TYPE= 'TIME    '           / Time axis (TIME, BINPHSPERI, BINLNGASC, etc)   INT_UNIT= 'SEC     '           / Unit of time axis (SEC, PHS (0-1), DEG)        SCALE   = 'FluxDen '           / Intensity units (FluxDen/RefFlux/Jansky)       POL_TYPE= 'IQUV    '           / Polarisation identifier (e.g., AABBCRCI, AA+BB)NPOL    =                    4 / Nr of polarisations                            TBIN    = '*       '           / [s] Time per bin or sample                     NBIN    =                 1025 / Nr of bins (PSR/CAL mode; else 1)              NBIN_PRD= '*       '           / Nr of bins/pulse period (for gated data)       PHS_OFFS= '*       '           / Phase offset of bin 0 for gated data           NBITS   = '*       '           / Nr of bits/datum (SEARCH mode data, else 1)    ZERO_OFF= '*       '           / Zero offset for SEARCH-mode data               SIGNINT = '*       '           / 1 for signed ints in SEARCH-mode data, else 0  NSUBOFFS= '*       '           / Subint offset (Contiguous SEARCH-mode files)   NCHAN   =                    1 / Number of channels/sub-bands in this file      CHAN_BW =                   0. / [MHz] Channel/sub-band width                   REFFREQ =               1392.5 / [MHz] Reference frequency                      DM      =                 340. / [cm-3 pc] DM for post-detection dedisperion    RM      =                  0.2 / [rad m-2] RM for post-detection deFaraday      NCHNOFFS= '*       '           / Channel/sub-band offset for split files        NSBLK   = '*       '           / Samples/row (SEARCH mode, else 1)              NSTOT   = '*       '           / Total number of samples (SEARCH mode, else 1)  NINFO   =                    0 / Number of additional information columns       EXTNAME = 'SUBINT  '           / name of this binary table extension            TUNIT2  = 's       '           / Units of field                                 TUNIT3  = 's       '           / Units of field                                 TUNIT5  = 'CM-3    '                                                            TUNIT6  = 'RAD     '                                                            TUNIT7  = 'MHz     '           / Units of field                                 TDIM11  = '(1025,1,4)'         / (NBIN,NCHAN,NPOL) or (NCHAN,NPOL,NSBLK*NBITS/8)TUNIT11 = 'Jy      '           / Units of subint data                           EXTVER  =                    1 / auto assigned by template parser               TTYPE4  = 'PERIOD  '           / label for field                                TFORM4  = '1D      '           / format of field                                TUNIT4  = 's       '           / Spin period in seconds                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         END                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     ?ë;ë—…p¬                @•Â     ?€  J‚WhIÁÕƒÈ~DŠHˆ@C’nBMVBºÙºAI);ƒ‚#„Œ†G‡d…Ý…ƒ„=…L€¦ƒ!…ƒŠ„å„œ„^ƒÃ„Gƒ#„Çƒ‘…†T…|ƒ„i‡VƒÕ…µ†]…-…eƒUƒ'„ûƒƒðƒNƒ+†¿††Ô„(ƒÇ‚›‚ó‚:‡…¡…×‚ÿ„ßƒ6‚Z……V†Ÿƒ%…š„½…2ƒ‚‹†„ü…G‡Ô†§‡r‚>Õƒ2€ƒ·„d„Ö…,‚®ƒ†p‡B†Š†Þ‚ç„h„Ûƒì…¶…7„…·…çƒ ƒƒ÷…H…âƒ „,…E„a…^¬ƒ…;…ˆ‡å†¥„+…û…ð„p„éƒÃ‚„@†k„Þ…Çƒ„´„R„î„š„÷†hƒ#÷‚¥ƒ!‡A…ªƒ)„ˆ‚ç‚s‡¬…’†Ä‚Ú„Ý…8„8ƒ“„S„ƒq†„½…÷‚%†¨†å„„„Í„ñ„‘‚D„q…G†„jƒY…|†ƒ“„l„¼† ƒ9„8……Û†´„Ü‚4ƒ‚ƒ„O†9…6…†µ…å†Ì„w…ðƒ»‚»‚À…ÝƒÖƒò„g†ƒJ†ñ‚£ƒõ„¤‡w„ÿƒEƒ´„-„Â…f†…-…	„šƒû‚]ƒÂ„¬……g„Ð„×…ˆ…«… ƒË„á„_…„¬‡…]ƒ`…-„ë…è…ôƒ‹†Ž…q…S…¦„ƒ&„E…°ƒ®…åƒ…Ú„e‚„N‚šƒ˜†…„-…Q†(…C‚ÕƒÄƒp„z„™ƒ0‚l…†–…r‚úƒ2úƒ=„‚³„;„6‚Kƒ©†
-…ƒªƒ™ƒƒ‹ƒƒRƒò†ç†\ˆ†¬…Z„’ƒüƒó…„„¹ƒÁ‚öª„„@ƒjƒæƒ¨…Ú††[†ƒö‚‘„Œ„{ƒØƒG…ƒ„µ†1…æƒM…/ƒ…‚‚¬…I‚‹†B÷„.‚…Ä…O…„²„2…„…Ë…9ƒ¯„ëÍe„ô†^…“†}†x‡E…¹ƒsƒò„„„³‡@…=„÷†]‡4…v…¯„B…p‚¯ƒƒ³„
-…=†5ƒ§…ˆ†~ƒ¦ƒîƒX…)…í„y…¢†z†TƒFƒÉ…÷…€‚…É„ÁƒP†¯„»…ƒ-…E„7‚ü…Õ…‡ˆ„b„>…)…‚…Xƒú‚é‚Ôƒ½‚ƒR„Ó„>ˆ„Kƒ8…—…h†"„™„s‡„²‡)ƒW†o†2…P……‚…„„£…'ƒ ƒÏƒ@‚à†Ï…e„s„h†ó‡[„e‚ñ„Ê…wƒd‡ƒðƒØ…¯„Ç„„Yƒ—„ƒ…ƒ×†(„„å‚‚d…	xƒ¥ƒ„·„1…±„`„Õ„­‡„P‚ì†`ƒî…Åƒ×†^…ƒ….ƒ7ƒÜ†ü…K…É…?†Þ‡…	…L„0…‰„¸…~‚ó†‚=„9ƒ,…½†´†4‡†o„é„Ë„Å‚ã‡¯…’…ì…ˆƒðƒ+„Y…:ƒ…K…b†ã‡†ë„ˆ‚Ñƒ„¨„‚„…G†…o…Òƒˆ„Ï„ãƒ€„“„ùéƒÇ„­…"…ƒä…‘‚ù„ã‚#ˆ&†Ä…!‡“…[‚„Â„Á†ƒÅ‚(……%†V„ž†„–ƒÚ„l…«ƒä„9ƒÂ…2…z„tƒ¥ƒJ‚µ…©‚J‡O…û‡…{†ˆ`ˆg†ä†‡×‹åS”ž§§ì¯þ·¼§ÁÐºêf
-ï5È_|îmòKá.5½æñ×çÐè3éìªíAï2ì°ÞòÏ@Âí¹Q°ó«©¥P¤ó›•ý‘¹ŒX†„9†J„Cƒ¨†M…ÂƒY„~†Iƒ…6†;ƒë‚Ë˜… ‡ƒîƒVƒq‚aƒÿ…Ô‡U†…"„_‚„‚Z…þ…5ƒÉ‡iˆ¼…i†Uƒ)„i„„E„%„;…a†ƒøƒ­„;ƒd…Q…i„¡…‡„Ñƒg…?ƒ„ß…ù„h…¨„¬„ÜƒÀƒÖ„p‚£…á„Y…)‚‚†‚Õƒ&ƒŒ‚DƒÑ„2ƒÕ„¯…Fƒø‚‚j„s†Ž…­ƒž…û†|ƒH„7‚O…ƒ1„ù„‚Ùƒàƒ,ƒW‚‚‰	„Ù†'…ò…v€ü„`„û„'‚å‚t„±„A‚ù„I…¼„„x„‘ƒÈƒÿ„…PƒÀƒ…»‡Ë‡…E„7ƒ ‚?ƒfƒ-‚ò‡ …·…"‚¥…°…"„e†„¶ƒ„¿…2…Ó……æ…Yƒ?…,†…H‚„€„Gƒ»…É…8ƒ<„­ƒÒƒóƒêû„ø„…y„Ì†ëƒ§„)L…x…Ô†‡Šƒ¯‚
-…þ„ƒƒ…Ò…¡…P„4Ýƒ‚¥…S„µ†R…ì†„«„(ƒý‚Žò„&ƒâƒé‚…^ƒh…óƒ„Hƒäi‚9‚…¶‚œ‚åƒ‡„½„Ø„¨ƒ>… …!…¼ƒ‚‚¦ƒg„@ƒ±ƒ …†U‚‚¶ƒqË…„¤‚ã„7…£ƒÔ„Ì„(‚w„œ…L‚vªƒ„€ƒ0†£…±„†éƒõ‚ …™ƒv„ÃƒÆ„„Ä…˜…„P‚Ñ‚š„ƒ†„ð†’‚Gƒäƒé‡·††ƒf…t„(„Uƒ&ƒç„Sƒ™á„0‚µ„„ƒžƒÛ†i…ëƒ†„z„¯­}GƒC„À„H†z……c„9ƒ„r……È„â†……Ÿ‚Wõƒƒä…ßƒJ‚­„Q„×„¯…^„…›‚ƒ„7ƒ)„ƒ]†É…Ú„a„Z‚Z‚a„ÇƒÆœ„Y‚rƒÌ„,„L„¥‚J‚‚Êƒþ…R…C†}ƒ\„¡ƒ½‚çƒ:…+„l„©……€ƒ/ƒ6„„o„³B°À² ¬h¯ªH²©±»±c±…±“²…´A°y¯w±’³°®³¸¯Q²ä±²b­Î±R±(°&±¯Î°Q°°N³«´Ð±)±I®‚­³S°n¯Ë²³±³Œ±&²6­©®A¯‰µ•² ²¬±<²A³Z®g²¡¯I¯.°+±Sµ_´y´x³È²°Ü´
-¯°ì®í¯—¯e±²k² ®Ù²ú³u¯X­?®§²8²~±ô² ¯ù­É®?²Ù±V°Æ±Í°æ®SµÜ¯²Î­¯g¯º°Ö±±Q±Ì³J²$³n«ô°m­™±û²t±!®Õ³²­å±\­¢°¯®Ô±Æ°Y³5®è²¼²þ±ý®¢¯û±N±³Ð±Ó´2³¯Ï°vµ—±8¯4³$²Â³µ²Ø´Z²_°Q±‹°å³H´²±U²¦±–¬ú³8³
-®†®O®á±*±Ð¯f±ä³&°2²ò²â°<¯o±Ä®û±ç°˜´x±(¶¦³W²N±Ó­È°±Ö´±u³ˆ²±F²´°î²Å°V²¤¯^²v¬‡³?°Þ®½²n´)®A®²I±³:±ú¯’¯ó²‹´ª°Û¯ü®†±N´° ±°Y­0³À±²ù²Á­z´³³¢³:®	¯³±j¯I¯à®ý°H¯t°r±J±´n´÷®ù¯~±,¬÷³·³Ð°[±Ü°ó±®­¯°³®[­¥±r¶‰¯2°’¯™®8±®‚­»³ ³C±‚·'³²Q²±§¯÷²­º±µ°[²ž°?¯s¬F¯±$±›²´Ì²ö±\¸µò²¯@¯Ú°(«Ö­Ã²Ø²Ð²tµj³Vµiµ²³2µô´b¯	²À°³Ê´R±ÿ®°|±ý¯y±ô³ì¯É±ë¯ï±s¯5­±¬‚±(­–·‡²?±$²ó°¯Ç±æ±Å®¾±H±¨µÃ´©´³S´³±Q³±³¯7´²±ÿ²d³¹±y´c³ÿ³¶”²°ö¯ý±l¯ë±œ³²Û±©­í±'³æ®?®p°´²<¯¶®ç±ø¸#µô´Ü±l¶µ´È°Ó°Ò®¡±í®¯ˆ¶=±‡±ž±ö±–¯$¯ô±ï±…ª|°§­P²®F­ô±d²°Ó¯k±E²Q®R±—°´ï²Þ°¯Œ°–²µ²0¯“®°'³²³²\³O®È®‹¯»¬R¯z³_´f¯-³…¯¯:´£´i²‚¯é°H±õ±°¾±Þ±¬Õ®÷´0³·±™®O±B±	´&°ì±¨®­í®õ°¯²¯¬¯f³0²£³•±‚°À¯´7³à±³°Æ²ó±?¯Ð¯É±i¯k±³ö°ì±å²°²A±b´e°U­·¯ã²¡¬Ý¯Ç²§²¾¯3²<³¦°Š­›°×¯`±²²I±t°y°ª´ê±¯%°±¯%°§±È°y²0²ª·¶o°Á°9®²N±m²~±ã·­è´öµ³X±¾²J±ÿ®Ò¯¤³±¿¯‰°Ã¯Õ°þ²E¯Â´ó±ïµú¯ç°³Ö³2°f°b°é­í¶‡±Ø°Ÿ±ó¯D²±(¯²­ß±¿²æ´mµW´(°ˆ°±Ò¯j­ô°×±o³¼±C°Ÿ¶¿³–³¬³é¶/­í¯9´'¶´½²
-³Â°”°¬²­ì§¯©(§×¨s­¯±É²5°ï¢¦°]Ú¥!Y^<|6îq›T;+#øõ‡Õ³É–±ƒÑ€ˆIÑ”ˆ–%œ£§Á°@±ç±˜·r¹²±a´8³­±ï³o¯ÿ²~¯¦°c²Í·C³°ƒ³ó´«¯É²µ«²h´²â±y±,°¼¯G­Ë¬î¯;«Ò±1¯ö°ñ³m±l±)¬ ²£¬î¯“²ò²õ±³
-¯.³|²È®°l°P³¢¶5´¹±Ã³¬¯ñ³u±Ì±´}°+²è±w³#².²X¯¤­±®u´'²!³›±³D³w²)°]µo­j¯‚´¸²¤±{±.³±6²a³¢®l¯M¸±l¯—¯æ²R³Š±×²i°!´b³B®J±~¯´°Í±°-²O°ï²M°š°eµ	²F³Ž±®0²²t°¤³F³F±~³Ã²4²ô²©±˜°²®ï®C²ª±²æ°ÿ²„°•¯q°›°Ó²7±G±o¶"²À±ï´A³¹²%·ª±
-±²´þ³‘¯Û³N²î±¤°€°p°L¯×°¾°Q¯´p±8¯²*¯A±.¯õ³n¯›´à²Š·A±²k³L¯ƒ¯ë³q³=´‰²¨±w¶³ìµ±í¯œ³.®‡±×¯–¯q¶·—°’°°²ï°ß´Ù²%®ø¯³±³P³Ù°%°Ã²ÅµO±­²Ö¯8²m²µ³g²÷ª	±”²°‹¯C°
-¯/³³°q²'²¯°i± ³²m´l±,±¡´±,²_®Ñ­ç­–±Ç¯ù³‚²µC³²[®¾°ã­³²¾°«´T¯ï³µÿ³ò¶F²Y±>°p«x²6®V±²°Ò±¬¯®_®Ì°Î®µ®£±¶s¬"±<°´±&­´b®µ´g³„²÷±y±Î²W±ö¯É¯…²2®Ã±í¯6´Ó³Oµ³±ß±±ç²¡´>µ1³±Q±°¯Ñ°-±L´ ±Å±Þ¯£°Ù°m¬\°N°ï´L±©±°ÿ°ð°³´²³´³³¯ë³X®©´8²¯ ²µS³Ê²°å²³:±ú°ì°•±¯²±ó±“³=¯V¯˜°Ø¯Õ°0¯i¯±²<·†³<°Ñ°z³b´l³Y¯ƒ·¬¯üµ
-
-~Þua
-ÓÖ	Ä
-L8îÞè	å
-
-™
- Rè
-Ó
-az1ÌdŠ	³.	vµ´	˜–D_ÙÍÏ
-D	Ò	î	Œ
-‚<
-p	³	F	Œ	_
-gÊU©Ž	øE-	‡{$'NÇ
-Mçì
-n
-Ïb
-4úf
-Ç
-Ó•­
-h¸
-D]	á
-4ÎÝ	ý°©bdÊ	Åà
-	¨
-ú
-‡ï
-T
-p	œ
-	T
-Ê	H
-%;‚;‰Gn
-²	)	u*
-JÃ‰
-#
-…Ýö	6b1í(Æ
-»
-L	§å
-¤¢5
-3…	´X
-Ó¼p
-gýv
-—Ú
-°Ý
-l	\’yÓS
--‹÷JàEK|è	¯èpš	?
-
-%nÅC^à
-†¸	C
-
-#bÿh²Ç	i
-»
-ÕK
-0…
-
-§Í	ì¹
-Š£ç
-S„ß1	{˜ë#¯
-?(•	ê	×ì.B[
-Ð	R
-'	åG
-Ý	6	²	ãvÚC	ú	Ñ
-³	*Û§	 Ë	tÜ
-2ú
-nù	?’	Ë	J>l			U
-ûÐ
-f
-˜	ÕU
-)
-6›h
-Ý«	Ý	ÄC	2¢Œ	Å	>†
-S
-Õ
-Šº
-Äã"
-Âe	æ
-±Ãt	M	¦
-Ù4
-ê	è
-ò	»>©[!‰ùyz
-Ðž	àÇm	®	G
-H·ìÖ!öƒf
-¤	\ñG
-é		ª¹
-_
-à	È
-Ágð	–y
-Î3
-Êèá	žî%
-ï
-Ò	eƒ	ÿ0vzØ:~	@	¢l>ã	UÄ	íí	ðl
-jo
-¨ô	D2óçä“Š$(	Bà^¢	8å	(	Áƒ¢C
- Y	–	’Ñ’3
-ÒJ'™!
-æ
-‰	Y	þ
-U.
-¤ˆG$üÌ Çƒ¡	`	 Ž
-ð*
-,³
-Ç
-!	ƒ#, J
-b÷¤$q
-€¨·„M‡	É
-)	*Ì^	a@	¼
-â_ä`	í	¯	ønäë
-AÛ	]	!
-Ñ	¿#F…h	Ñ
-d
-ëÇù
-›	ì	¬
- 	Ó
-&
-»
-+`
-3
-Øn	
-Õ¶íR,
-—
-µ
-Q	Æ
-	
-;îò•ê_
-D;¶e	Š
-¡¤ñ¾Ÿ—
-M
-%	%ø
-	`Ð&ÕÔ		
-	]G
-	¿« çüˆôí¿êòç	å£à…ÜÐ)ºvš€þ±€Ûêýw‡2 H
-Z1m‘xþîuªccOè@3%œ «
-ÆÐf
-
-49
-v­
-¹
-‘#
-Í¹Ÿ
-Tª	-
-=­
-
-d	ýö		u
-÷ß?v¤	,ôª±„Â•˜	®·	Õ
-cÙ¥¹
-u
-‡	'0Xög1É
-=	p	k	—
-ûIÉVÎæ 
-•	Ú	­0Áz
-ë
-îZ¹‰µ
-~	é
-™Š~	«½	â	ÌVz`
-ü	YU	†
-Ï	~lÜb06
-ß
-Cñ	nZ›	
-p1Å¡
-¯ì
-©
-3}
-I
-y	vAP	<Åh	Ë	ð
-¹
-ö
-Q	ª	…Tn	ùø
-‡	Û
-Ô-
-	„†
-å…¦y
-nY	Ÿ—	
-ì
-2KÀ…
-SÁÁ	ö	E685õ
-o¹áz‚
-û	•2
-énÌ¯îÖv,
-B	Ü	o
-?zˆ
-y	•é!
-¥’
-
-íõ,jœ‡˜
-nÜ¶	ß`	î	ž	³Q	X¬m
-tKü	`Q¤¿°EA	å	Ë
-D	B
-Ã
-À 	ÑwÜW
-Â§
-\–>d
-¤c	¥	n|q	·éÛ¦¾œ
-ž	ß
-¥
-“x
-kFLð
- .
-jA_¨èÂ:X
-½	KQ	‰	v°	#˜\
-«
-	*Á5Ý	uÒ	ß
-MV
-Z2¥\
-é
-û
-ß	ì	d	·	~
-À
-m
-¾7òm0Í¶tk+
-o
-Ä‹CÓÄO'
-bÖd
-Q
-æ-‹–
-ù}
-	qÓ	þ«=ªš7¬T˜«µj«®­g´Ä¦Õ­ïÄ«àÃuŸ§Ð§î«á±r¥½¿&’:¦£ºz§­2¯ÿ°¿f­Z–d©ðŠ%œ¬g¢²ÿŸ’©\Á»Š¨lŽÙ¾˜„¦M¼Û¤Xœ3°²õå³B¢\½­Ö»ŸéÆ_¢—¹–§7«Û ÿ¼Ç—w²O³‚°O½»vŸOªk·°£&¨·¢ä³#¬ÝÄû¸¼›vš«šÐ°³¶lºÖžy°@¥÷™‰¤u¤ªžä‘…¨÷¥‡²E—`ž™¬£ZŸª–Ÿ¢é¢5›¦‰ª,µ\ª£¾¨Á§^©l½ã©m –ržçµ¡J§–²ï¨J±¢–¦™§¨·T›@¥|Á"¯5š>£r¯šd±Ú£}Äi¤ÅÅ²¥Ì¡û§È©`£Ä«¬	¸Õ©·ª2±“á—˜©Àµ,§.È’z¥ˆ£ö±;œ)™n“aœ2¨ô“Â·ƒ !»É¹ö£w­«¯œ=µˆ£Ü¾=ŠQ¨Ô³	¬€Ç‹°"ž‘¡«È—µ×¤¯¨¥°–¦Ú£³¤ ¸í£0¤*¡¾u­¼¯é˜}²î£'¢t¦Ì ™« r±¾ŸSµ¸N¢Å³|ší¥’¶‚°¤µåü³•«Ù,ªò“ª‡©^³ÛÅ¤q±3«¥5ªYŸh”F¦R£p£ïª§=€«™Ÿò«_®g¤m£Ê²Þ¨Œ²»™©¬ƒ™Uª»˜˜Ç´÷žC¢S˜—ðµûœ8µªK¾IÂ¬¨l­+¨®¯­—ä©’£F«Ñ³_´ê¥”°W§¤Œ†¯±°Ê·/ O¼¯÷Àµ,±F›Ó¤_¬b­è¢ç¼#§	¤t¸/¤ø£bš¢Q \“*°´¹s§q¼§Ý­s¥²•QÅ¶‰¨•°|¾B­Á(µm“ˆ¶¬“FžÒº¢¨ª½á³°°F¡¨Ú£0«e£žUœ“€Àê¢>”HŸ/¸=¯‚Ê”‡5§ú¸¢fªE£n—±šÛ‰£“€—š"½¤¥Ø£2·±Y²Ž8Ž2¾2·‰»˜”¿”³¡š&¯è®K¶%¯´˜Û¥°›s«.µ Àwœ/µÌªÁ§.¢®¤­¹­³&ŸŸ¨©©’™UŸó•®®¢ïÁ¡L««£Î©l¤Ÿ—¤w£(µP°°ˆ·-›²¹Œ¥Î—~­—ð²8Çë¢;»ç›ß­ñžO’èže§®²(Ÿñ¥¯­ý­[µŠï¡»‰¥ ³¥á¶ÛÀÓ¸Ü¦m·F’‡˜ñ®?¸·¸É¤„£°¬§}Ÿ­µÙ¥K™Tºˆ© ’ ¶­„µ(»x«¤²
- [²¯0¨@Ÿ·£Í®aÀsµð¾‘±ø³•²Ð¨ÏÅ*´ò§.Â|»¨Ÿ© ÂÛ®µ«Š’¬!ªá·ò´î®Ï¨^Ÿ~‰`Žû“ã£tŸÈ¯2²§Ç¤þ²|ªüœd¬vµO¯©ÊŽ°çŸ†©£ˆ«—±˜i¯™’©ò±ñ²Å³Œ½e’ª£T¤ ©]­£B­ä¤fÏ(²ëƒ§À«©Ë˜F–,¶ã¹~µ5žQ¬xŸ¸ÿŽ®Ù§ßŸV°¯ª`¬¬¨ý³³±é—jŸIª¾”)®1¾}˜}±äš¸û£?£ß©;‘ö¡w©»mŸû¢³xº¡ÿÀ…±éªø›5ÓÜ²Ø±9£7ÄK¯oìöâF¬ªÞ…ÏÇ&²atmLdleMtóîx¦H  ˆðð Ö¢»û³t´6±¡¼¥Ó±–|¥&¢SÀ¤¤ì©3˜¸3´Ñœ«¸²È§´¨m¼k®º£¥­±¥#È0ÁäµŒ§L±'ž£²”í©Ü²7Äø¾\¬ù¯˜JˆQ¯«©˜¾™¬µyªå£¦¶©®­«–´Í½Ú¢sÆø½`µ2©8››¡x˜»”žœ^¯È™Ö¬¯³–¦hšC é´v•ƒž}§R³Ö­|«‹šü¬f¢Æ—èõ§TªªŸµÅ§b§f£¤¡¶¡[’8•”‘X©ç­²–*ªÇ¢¤!›Ó—¯¦_¬¤Ï´ž²‹­©¸žµA®g¾É¸A4«Ïõ®µ¿š«‚°—Ó™ü—cŸ/©‹£3¥|ªiåµ\—”À©õ«·š²½²T´ ¾Þ£·¤Í²ù›ì›š™ §f°Ã¼)©×’>®š®ÿ¶+ª°‹®lªŽÀq¶,Ñûœ˜±Ý¥€¯Ê¶€§D´ø¯2­´ë’Wµ>ž®·@£¥­‰VŸÚ¨Åª{¬ ©êµT±ºŽÀ´·Ü¬dº‚¦æ¸@½©°˜jŽƒ–©š´9§ºš’¢Ü›"°<£P§Þšgµô ü®…¸6ÃL¦I½Ô³®Ï¬Æ“cœ¯´¼K©Ö§ ¬‚Ÿm³!’lœ´¥á¨G®×ŸE´Ô­c•¬Î©·¶1¥À¶”ÈC¬ ¿ÊŸ¯¨­\§ž˜¦:—©¥.®Í§ï›=Áõ©}»è¸>¼Ã¤D¬íÀ°é²‡¥8¾J¢ë™º³|³ƒÂÆ´´`¬jµZ¢É»y ®˜„ì§ä­õ¸X±©Ê¤b¿¦`—fµ÷©µ¼ý£IžÖ¦û¶Õ»«´µ¡K—>­6³¡–¸«Ïº¾¦ÕÈ3¢«°ïž¤p¨AÇL§™½Ä®ú™-¶‰¹n›­»o¤J ^µ´¶é¯°¸Åd¤Ú°ä½¯á®Ëœå¾Bµz³4šÚÂ™y½žÂ£„¯*²¶Æ±l¤™©œ~j­„¢˜ª«À² ¸Âµù­)™ï¥ƒ§¥)®Ý©¹©­iŸ7«P˜†º¦N˜¼—^¥•²¦¯ˆ·É£*­|¾]°¼                                                                                                                                                                                                                                                                                                                                                            

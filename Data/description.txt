@@ -1,4 +1,0 @@
-FAST_Profiles - data from FAST pulsar survey (add website)
-MeerKAT_Profiles - data from MeerKAT survey (add website)
-EPN_Profiels - data from EPN website (https://psrweb.jb.man.ac.uk/epndb/)
-psrcat.db - ATNF Pulsar catalog
