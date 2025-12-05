@@ -34,7 +34,18 @@ Radiative transfer moudle depends on [Eigen3](https://libeigen.gitlab.io/) and [
 ### Simple profile computation
 
 ```python
+import numpy as np
 import psr_tools
+# Create radio pulsar object with observational parameters
+PSR = psr_tools.ObservedRadioPulsar('Pulsar', P=0.56, Pdot=1e-15, B12=1.23, chi_deg=26, beta_deg=2.4, freq=1250) 
+# Create magnetosphere and emission model
+model = psr_tools.radiative_trasfer.FixedHeightModel(multiplicity=3066, gamma=103, Rem=44)
+# Create profile calculator
+profile_calculator = psr_tools.radiative_trasfer.ProfileCalculator(PSR, model)
+# Compute profile
+profile = profile_calculator.calculate_profile(-15, 15, 1, 0)
+# Plot profile
+profile.plot_profile(zoom=True)
 
 ```
 
