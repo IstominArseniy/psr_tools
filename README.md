@@ -12,23 +12,35 @@ The projects aims to combine various models and routines for computing pulsar se
 
 ## Installation
 
-Using pip
+With pip:  
 
 ```bash
 to be done
 ```
 
-From source:
+From source:  
+To use pure python moudeles one should just clone this repository and install appropriate python dependencies.  
+In oder to build modules with c++ extensions (currently it is only psr_tools.radiative_transfer module) one should install c++ dependencies and run cmake in psr_tools/radiative_transfer folder.
 ```bash
-
+cd psr_tools
+cd radiative_transfer
+cmake .
+make
 ```
 ## Dependencies
+Radiative transfer moudle depends on [Eigen3](https://libeigen.gitlab.io/) and [pybind11](https://pybind11.readthedocs.io/en/stable/index.html) c++ libraries.
 ## Usage/Examples
 
 ```python
-import to_be_done
+import psr_lib
 
 ```
+
+## Module description
+- `plasma_production` - contains various models of secondary plasma production above radio pulsar polar cap
+- `data_processing` - contains routins to process observational or modelled data
+- `radiative transfer` - contains models of polarisation transfer in radio pulsar magnetophsere. Currently the module is heavily based on [Loki-pulsar-propagation](https://github.com/haykh/Loki-pulsar-propagation) repository
+
 
 
 ## Feedback
