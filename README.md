@@ -31,6 +31,8 @@ make
 Radiative transfer moudle depends on [Eigen3](https://libeigen.gitlab.io/) and [pybind11](https://pybind11.readthedocs.io/en/stable/index.html) c++ libraries.
 ## Usage/Examples
 
+### Simple profile computation
+
 ```python
 import psr_tools
 
