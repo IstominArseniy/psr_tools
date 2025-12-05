@@ -2,9 +2,9 @@ import numpy as np
 import itertools
 
 from multiprocessing import Pool
-from psr_lib.radiative_trasfer import cpp_interface
+from psr_lib.radiative_trasfer import loki_python_binding
 from psr_lib.interface import PulsarProfile
-class Model:
+class FixedHeightModel:
     def __init__(self, multiplicity, gamma, Rem, fr=1, fphi=1):
         self.fr = fr
         self.fphi = fphi
@@ -18,7 +18,7 @@ class ProfileCalculator:
     def __init__(self, PSR, model):
         self.psr_dict = {"B12":PSR.B_surf12, "Period":PSR.P, "chi_deg":PSR.chi_deg, "beta_deg":PSR.beta_deg, "freqGHz":PSR.freq*1e-3, "Rs":PSR.R}
         self.model_dict = {"fr":model.fr, "fphi":model.fphi, "Rem":model.Rem, "lambda":model.multiplicity, "gamma0":model.gamma}
-        self.profile_calculator = cpp_interface.ProfileCalculator(self.psr_dict, self.model_dict)
+        self.profile_calculator = loki_python_binding.ProfileCalculator(self.psr_dict, self.model_dict)
 
     @staticmethod
     def _worker(calculator, phi, mode):
