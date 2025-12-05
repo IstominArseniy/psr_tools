@@ -2,8 +2,8 @@ import numpy as np
 import itertools
 
 from multiprocessing import Pool
-from psr_lib.radiative_trasfer import loki_python_binding
-from psr_lib.interface import PulsarProfile
+from psr_tools.radiative_trasfer import loki_python_binding
+from psr_tools.interface import PulsarProfile
 class FixedHeightModel:
     def __init__(self, multiplicity, gamma, Rem, fr=1, fphi=1):
         self.fr = fr

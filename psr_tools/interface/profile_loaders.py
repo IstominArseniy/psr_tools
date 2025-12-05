@@ -1,7 +1,7 @@
 import numpy as np
 from astropy.io import fits
-from psr_lib import data_processing as processing
-from psr_lib import interface
+from psr_tools import data_processing as processing
+from psr_tools import interface
 
 from matplotlib import pyplot as plt
 

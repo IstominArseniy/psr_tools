@@ -4,7 +4,7 @@ import scipy.interpolate
 import scipy.signal
 import scipy.interpolate
 
-from psr_lib import data_processing as processing
+from psr_tools import data_processing as processing
 
 
 

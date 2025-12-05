@@ -12,13 +12,13 @@ The projects aims to combine various models and routines for computing pulsar se
 
 ## Installation
 
-With pip:  
+### With pip  
 
 ```bash
 to be done
 ```
 
-From source:  
+### From source 
 To use pure python moudeles one should just clone this repository and install appropriate python dependencies.  
 In oder to build modules with c++ extensions (currently it is only psr_tools.radiative_transfer module) one should install c++ dependencies and run cmake in psr_tools/radiative_transfer folder.
 ```bash
@@ -32,7 +32,7 @@ Radiative transfer moudle depends on [Eigen3](https://libeigen.gitlab.io/) and [
 ## Usage/Examples
 
 ```python
-import psr_lib
+import psr_tools
 
 ```
 

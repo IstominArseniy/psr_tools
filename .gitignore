@@ -224,7 +224,7 @@ Pics/
 pics/
 
 # Scripts and tests folders
-psr_lib/scripts_and_tests/
+psr_tools/scripts_and_tests/
 scripts/
 tests/
 

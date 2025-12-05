@@ -2,7 +2,7 @@
 requires = ["hatchling >= 1.26, astropy >= 7.1.0, tomlkit >= 0.13.3, tqdm >= 4.67.1"]
 build-backend = "hatchling.build"
 [project]
-name = "psr_lib"
+name = "psr_tools"
 version = "0.0.1"
 authors = [
   { name="Istomin Arseniy", email="istomin15arseniy@gmail.com" },
