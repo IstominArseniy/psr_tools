@@ -2,7 +2,7 @@
 # psr_tools
 
 
-The projects aims to combine various models and routines for computing pulsar secondary plasma characterisitcs and mean emission profiles into one self-contained Python library.
+The projects aims to combine various models and routines for computing pulsar secondary plasma characteristics and mean emission profiles into one self-contained Python library.
 
 
 ## Documentation
@@ -28,7 +28,7 @@ cmake .
 make
 ```
 ## Dependencies
-Radiative transfer moudle depends on [Eigen3](https://libeigen.gitlab.io/) and [pybind11](https://pybind11.readthedocs.io/en/stable/index.html) c++ libraries.
+`radiative_transfer` moudle depends on [Eigen3](https://libeigen.gitlab.io/) and [pybind11](https://pybind11.readthedocs.io/en/stable/index.html) c++ libraries.
 ## Usage/Examples
 
 ### Simple profile computation
