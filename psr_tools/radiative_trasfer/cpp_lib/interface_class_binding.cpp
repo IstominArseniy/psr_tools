@@ -10,7 +10,6 @@ PYBIND11_MODULE(loki_python_binding, m, py::mod_gil_not_used()) {
         .def(py::init<const std::map<std::string, double>, const std::map<std::string, double> >())
         .def("find_ILVPA", &CppInterface::find_ILVPA)
         .def("find_I", &CppInterface::find_I)
-        .def("get_rho", &CppInterface::get_rho)
         .def("calculate_profile", &CppInterface::calculate_profile);
 
 }

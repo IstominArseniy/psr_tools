@@ -50,19 +50,25 @@ void CppInterface::init_from_file(std::string filename)
     model_ = FixedHeightModel(model_dict, PSR_);
 }
 
+
+
 std::map<std::string, double> CppInterface::find_ILVPA(double phi, int mode, bool with_absorption)
 {
+    std::vector<double> theta_final;
+    double I;
+    
     FixedHeightSolver solver(phi, mode, PSR_, model_);
     double l1 = solver.find_initial_point(false);
     double l2 = std::min(2.5 * get_R_escape(), 2*PSR_.RLC);
     solver.write_params_on_ray(log_path_);
     std::vector<double> theta_init = solver.find_approximate_KO_solution(l1);
-    std::vector<double> theta_final = solver.solve_KO_equations(theta_init, l1, l2, log_path_);
-    double I = solver.find_intensity();
+    theta_final = solver.solve_KO_equations(theta_init, l1, l2, log_path_);
+    I = solver.find_intensity();
     if(with_absorption==true){
         double tau = solver.get_tau();
         I *= std::exp(-tau);
     }
+    
     double V = I * std::tanh(2.0 * theta_final[1]);
     double PA = theta_final[0] * 180.0 / constants::PI;
     std::map<std::string, double> result;
