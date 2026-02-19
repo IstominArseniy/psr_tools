@@ -212,6 +212,7 @@ test.ipynb
 
 # Data folder
 Data/
+psr_tools/Data/
 
 # All .ipynb files 
 *.ipynb
