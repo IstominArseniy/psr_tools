@@ -53,7 +53,7 @@ class PulsarProfile:
             profile.V /= Imax
         profile.L = np.sqrt(Q**2 + U**2)
         profile.L -= processing.noise_mean(profile.L)
-        profile.PA = processing.shift_angle(0.5 * np.arctan2(Q, U)) * 180 /np.pi
+        profile.PA = processing.shift_angle(0.5 * np.arctan2(U, Q)) * 180 /np.pi
         return profile
 
     @classmethod

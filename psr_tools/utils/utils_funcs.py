@@ -29,3 +29,10 @@ def inverse_sample_function(dist, Npnts, x_min=-100, x_max=100, n=1e6, **kwargs)
   cumulative -= cumulative.min()
   f = interpolate.interp1d(cumulative/cumulative.max(), x)
   return f(np.random.random(int(Npnts)))
+
+def calculate_width(chi, beta, rho):
+    dzeta = beta + chi
+    if np.sqrt(np.sin((rho + beta)/2) * np.sin((rho - beta)/2) / np.sin(chi) / np.sin(dzeta)) >= 1:
+        return 2 * np.pi
+    return 4 * np.arcsin(np.sqrt(np.sin((rho + beta)/2) * np.sin((rho - beta)/2) \
+    / np.sin(chi) / np.sin(dzeta)))
