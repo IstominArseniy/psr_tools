@@ -17,7 +17,7 @@ double FixedHeightModel::density_profile(double x_pc, double phi_pc)
 {
     // double f = std::pow(x_pc, 2);
     // return (pow(f, 2.5) * exp(-f * f) / (pow(f, 2.5) + pow(0.5, 2.5))) * 1;
-    return 100 * std::pow(x_pc, 3) * std::exp(-10 * std::pow(x_pc, 2));
+    return 100 * std::pow(x_pc, 3) * std::exp(-7 * std::pow(x_pc, 2));
 }
 
 Vector3d FixedHeightModel::Bfield(Vector3d vR, Vector3d m){

@@ -15,7 +15,6 @@ class FixedHeightModel:
         self.Rem = Rem
 
 
-
 class ProfileCalculator:
     def __init__(self, PSR, model):
         self.model = model

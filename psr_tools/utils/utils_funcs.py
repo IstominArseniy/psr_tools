@@ -36,3 +36,18 @@ def calculate_width(chi, beta, rho):
         return 2 * np.pi
     return 4 * np.arcsin(np.sqrt(np.sin((rho + beta)/2) * np.sin((rho - beta)/2) \
     / np.sin(chi) / np.sin(dzeta)))
+
+def smooth_angle_array(angles, module=180):
+    if (module) != 180 and (module != 360):
+        print("ARE YOU SHURE THAT module VALUE IS NOT 180 OR 360 degree ???")
+    angles_to_process = np.array(angles)
+    new_angles = np.zeros_like(angles_to_process)
+    new_angles[0] = angles_to_process[0] % module
+    for index in range(1, len(angles_to_process)):
+        angle1 = (new_angles[index - 1] // module * module) + angles_to_process[index] % module
+        angle2 = (new_angles[index - 1] // module * module) - module + angles_to_process[index] % module
+        if np.abs(angle1 - new_angles[index - 1]) < np.abs(angle2 - new_angles[index - 1]):
+            new_angles[index] = angle1
+        else:
+            new_angles[index] = angle2
+    return new_angles   

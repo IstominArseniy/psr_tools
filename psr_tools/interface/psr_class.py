@@ -93,7 +93,6 @@ class RadioPulsar():
         return: curvature radius
         """
         EPS = self.R**2 / self.R0 / self.RLC
-        EPS=0
         Rc_cm =  self.KRc * 4/3 * self.R**2 / self.R0 / (x + EPS) * np.sqrt(r)
         if units == 'cm':
             return Rc_cm
@@ -104,13 +103,13 @@ class RadioPulsar():
         else:
             raise ValueError("Incorrect units name.")
 
-    def hRS(self, r, phi, units='cm'):
+    def hRS(self, x, phi, units='cm'):
         """
         Ruderman-Sutherlend height
         units can be cm, R0 and R
         """
-        cs=np.abs(np.cos(self.chi-1.5 * np.sin(phi) * np.sin(self.chi) * r * self.R0/ self.R ))
-        h_cm = 1.1e2 * cs**(-3/7) * self.Rc(r, units='cm')**(2/7) * self.P**(3/7) / self.B_surf12**(4/7)
+        cs=np.abs(np.cos(self.chi-1.5 * np.sin(phi) * np.sin(self.chi) * x * self.R0/ self.R ))
+        h_cm = 1.1e2 * cs**(-3/7) * self.Rc(x, 1, units='cm')**(2/7) * self.P**(3/7) / self.B_surf12**(4/7)
         if units == 'cm':
             return h_cm
         elif units == 'R0':
