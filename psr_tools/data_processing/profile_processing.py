@@ -36,16 +36,16 @@ def find_power_law_ind(xs, ys):
     res = scipy.stats.linregress(log_xs, log_ys)
     return res.slope, res.rvalue
 
-def shift_angle(angle):
-    angle = np.asarray(angle)
-    scalar_in = (angle.ndim==0)
-    angle_vals = np.array(angle, copy=True, ndmin=1, dtype=float)
-    for i in range(angle_vals.shape[0]):
-        while angle_vals[i] > 90:
-            angle_vals[i] -= 180
-        while angle_vals[i] < -90:
-            angle_vals[i] += 180
-    if scalar_in:
-        return angle_vals[0]
-    else:
-        return angle_vals
+# def shift_angle(angle):
+#     angle = np.asarray(angle)
+#     scalar_in = (angle.ndim==0)
+#     angle_vals = np.array(angle, copy=True, ndmin=1, dtype=float)
+#     for i in range(angle_vals.shape[0]):
+#         while angle_vals[i] > 90:
+#             angle_vals[i] -= 180
+#         while angle_vals[i] < -90:
+#             angle_vals[i] += 180
+#     if scalar_in:
+#         return angle_vals[0]
+#     else:
+#         return angle_vals

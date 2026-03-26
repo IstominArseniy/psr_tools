@@ -42,12 +42,29 @@ def smooth_angle_array(angles, module=180):
         print("ARE YOU SHURE THAT module VALUE IS NOT 180 OR 360 degree ???")
     angles_to_process = np.array(angles)
     new_angles = np.zeros_like(angles_to_process)
-    new_angles[0] = angles_to_process[0] % module
+    new_angles[0] = angles_to_process[0]
     for index in range(1, len(angles_to_process)):
         angle1 = (new_angles[index - 1] // module * module) + angles_to_process[index] % module
         angle2 = (new_angles[index - 1] // module * module) - module + angles_to_process[index] % module
-        if np.abs(angle1 - new_angles[index - 1]) < np.abs(angle2 - new_angles[index - 1]):
+        angle3 = (new_angles[index - 1] // module * module) + module + angles_to_process[index] % module
+        if (np.abs(angle1 - new_angles[index - 1]) < np.abs(angle2 - new_angles[index - 1])) and (np.abs(angle1 - new_angles[index - 1]) < np.abs(angle3 - new_angles[index - 1])):
             new_angles[index] = angle1
-        else:
+        elif (np.abs(angle2 - new_angles[index - 1]) < np.abs(angle1 - new_angles[index - 1])) and (np.abs(angle2 - new_angles[index - 1]) < np.abs(angle3 - new_angles[index - 1])):
             new_angles[index] = angle2
-    return new_angles   
+        else:
+            new_angles[index] = angle3
+    return new_angles    
+
+def shift_angle(angle):
+    angle = np.asarray(angle)
+    scalar_in = (angle.ndim==0)
+    angle_vals = np.array(angle, copy=True, ndmin=1, dtype=float)
+    for i in range(angle_vals.shape[0]):
+        while angle_vals[i] > 90:
+            angle_vals[i] -= 180
+        while angle_vals[i] < -90:
+            angle_vals[i] += 180
+    if scalar_in:
+        return angle_vals[0]
+    else:
+        return angle_vals
