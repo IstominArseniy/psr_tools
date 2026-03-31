@@ -46,7 +46,7 @@ class DensityProfile1D:
             json.dump(tmp_dict, f)
 
     def _find_multiplicity(self):
-        scipy.integrate.trapezoid(self.n_arr, self.x_arr)
+        return scipy.integrate.trapezoid(self.n_arr, self.x_arr)
 
 class DensityProfile2D:
     def __init__(self, x_arr, phi_arr, n_arr):
