@@ -5,6 +5,8 @@ import scipy.signal
 import scipy.interpolate
 
 from psr_tools import data_processing as processing
+from psr_tools import utils
+
 
 
 
@@ -53,7 +55,7 @@ class PulsarProfile:
             profile.V /= Imax
         profile.L = np.sqrt(Q**2 + U**2)
         profile.L -= processing.noise_mean(profile.L)
-        profile.PA = processing.shift_angle(0.5 * np.arctan2(U, Q)*180/np.pi)
+        profile.PA = utils.shift_angle(0.5 * np.arctan2(U, Q)*180/np.pi)
         return profile
 
     @classmethod
@@ -215,7 +217,7 @@ class PulsarProfile:
     def find_emission_mode(self, boarder_value=0.4):
         left_ind, right_ind = self.get_level_bounds(10)
         Vs = self.V[left_ind:right_ind]
-        PAs = processing.shift_angle(self.PA[left_ind:right_ind])
+        PAs = utils.shift_angle(self.PA[left_ind:right_ind])
         Imax = np.max(self.I)
         Is = self.I[left_ind:right_ind] / Imax
         Ls = self.L[left_ind:right_ind] / Imax
@@ -297,7 +299,7 @@ class PulsarProfile:
         PAs = self.PA[left_ind : right_ind + 1]
         quality_L_array = ((Ls / (np.abs(Is) + 0.01 * np.max(Is))) > 0.1) & (Is > 4 * noise)
         axs[0].set_xlim(left_ind / self.Ncounts, (right_ind + 1)/self.Ncounts)
-        axs[0].scatter(phase_arr[quality_L_array], processing.shift_angle(PAs[quality_L_array]), c='black', s=3)
+        axs[0].scatter(phase_arr[quality_L_array], utils.shift_angle(PAs[quality_L_array]), c='black', s=3)
         axs[1].plot(phase_arr, Is, c='black', label='I', linewidth=1)
         if plot_polarisation == True:
             axs[1].plot(phase_arr, Vs, c='blue', label='V')
