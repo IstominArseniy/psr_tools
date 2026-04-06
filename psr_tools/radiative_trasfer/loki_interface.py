@@ -49,7 +49,7 @@ class ProfileCalculator:
             Ls.append(ILVPA['L'])
             Vs.append(ILVPA['V'])
             PAs.append(ILVPA['PA'])
-        profile = PulsarProfile.from_ILVPA(Is, Ls, Vs, PAs, phi_step)
+        profile = PulsarProfile.from_ILVPA(Is, Ls, Vs, PAs, phi_step, normalize=False)
         return profile
     
     def get_r_esc(self):

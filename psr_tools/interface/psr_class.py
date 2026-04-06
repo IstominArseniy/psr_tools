@@ -11,7 +11,7 @@ Class with basic information about RadioPulsar
 
 class RadioPulsar():
     def __init__(self, PSR_NAME, P, B12, chi_deg, Rkm=12, M_solar=1.4, Ir=100):
-        # ----------------Set basic parameters------------------------
+        # ----------------Basic parameters------------------------
         self.PSR_NAME = PSR_NAME
         self.P = P # in s
         self.B_surf12 = B12
@@ -21,7 +21,7 @@ class RadioPulsar():
         self.M_solar = M_solar # in solar masses
         self.Ir = Ir # in Solar masses * km^2
 
-        # ----------------Set derived parameters------------------------
+        # ----------------Derived parameters------------------------
         self.chi = chi_deg / 180 * np.pi
         self.Lambda = 20 # free pass length Lambda parameter
         self.R = self.Rkm * 1e5
@@ -82,8 +82,6 @@ class RadioPulsar():
             return angle * 180 / np.pi
         else:
             raise ValueError("Incorrect units name.")
-
-
 
     def Rc(self, x, r, units='cm'):
         """
