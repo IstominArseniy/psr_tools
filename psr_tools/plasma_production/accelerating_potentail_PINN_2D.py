@@ -152,8 +152,6 @@ class PoissonSolver:
             # PDE losses
             if epoch % epochs_per_batch == 0: # make new batch of points
                 rs, zs = self.batch_generator(batch_size)
-                print(psutil.virtual_memory().percent)
-
 
             pt_rs = Variable(torch.from_numpy(rs).float(), requires_grad=True).to(device) # TODO optimize data transfer to device
             pt_zs = Variable(torch.from_numpy(zs).float(), requires_grad=True).to(device) # TODO optimize data transfer to device
@@ -161,19 +159,18 @@ class PoissonSolver:
 
             pde_residual = self.PDEres(pt_rs, pt_zs)
             mse_pde = self.mse_cost_function(pde_residual, pt_all_zeros)
-
             # Combining the loss functions
             loss = self.w_bc * (mse_bc_1 + mse_bc_2 + mse_bc_3 + mse_bc_4)/4.0 + (1 - self.w_bc) * mse_pde
             with torch.autograd.no_grad(): # to track progress
                 if epoch % epochs_per_batch == 0:
                     print(epoch, loss.data)
 
-            self.bc_losses.append(((mse_bc_1 + mse_bc_2 + mse_bc_3 + mse_bc_4)/4.0).data.item())
-            self.pde_losses.append(mse_pde.data.item())
-            self.losses.append(loss)
-
-            loss.backward() # This is for computing gradients using backward propagation
+            self.bc_losses.append(((mse_bc_1.detach() + mse_bc_2.detach() + mse_bc_3.detach() + mse_bc_4.detach())/4.0).data.item())
+            self.pde_losses.append(mse_pde.detach().data.item())
+            self.losses.append(loss.detach())
+            loss.backward() # computing gradients using backward propagation
             self.optimizer.step()
+
 
     def get_psi(self, r, z, normalize=True, cut_at_h0=True):
         """
