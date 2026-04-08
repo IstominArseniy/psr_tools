@@ -10,5 +10,5 @@ def vac_potential(PSR:RadioPulsar, x, phi=0):
 def simple_potential(PSR:RadioPulsar, x, phi=0):
     return np.minimum(RS_potential(PSR, x, phi), vac_potential(PSR, x, phi))
 
-def psi_to_gamma(PSR:RadioPulsar, psi):
+def psi_to_gamma(psi):
     return 5.9e-4 * psi
