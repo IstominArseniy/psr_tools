@@ -318,9 +318,9 @@ double FixedHeightSolver::delta (double l) {
   double sinth = std::sin(theta_kb(l));
   double costh = std::cos(theta_kb(l));
   // std::cout << phi_ * 180 /constants::PI << " " << -vUdr(0) (1) << " " << -vUdr(0) (0) << " " << std::atan2(-std::cos(theta_kb(0))*vUdr(0) (1), std::sin(theta_kb(0))- vUdr(0) (0)) << std::endl;
-  // return std::atan2(-costh * vy, sinth-vx);
+  return std::atan2(-costh * vy, sinth-vx);
   // return 0.5 * std::atan(-2*vy*costh*(sinth-vx) / ((sinth-vx)*(sinth-vx) - costh*costh*vy*vy));
-  return 0.5 * std::atan2(-2*vy*costh*(sinth-vx), ((sinth-vx)*(sinth-vx) - costh*costh*vy*vy));
+  // return 0.5 * std::atan2(-2*vy*costh*(sinth-vx), ((sinth-vx)*(sinth-vx) - costh*costh*vy*vy));
 }
 
 double FixedHeightSolver::BetaB (double l) {

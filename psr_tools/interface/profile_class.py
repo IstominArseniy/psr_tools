@@ -292,13 +292,13 @@ class PulsarProfile:
             left_ind, right_ind = \
                 int(max(left_ind - 0.25 * (right_ind - left_ind), 0)), int(min(right_ind + 0.25 * (right_ind - left_ind), self.Ncounts - 1))
             
-        phase_arr = np.linspace(left_ind / self.Ncounts, (right_ind + 1)/self.Ncounts, right_ind - left_ind + 1)
+        phase_arr = np.linspace(left_ind / self.Ncounts, (right_ind + 1)/self.Ncounts, right_ind - left_ind + 1) * 360-180
         Is = self.I[left_ind : right_ind + 1]
         Ls = self.L[left_ind : right_ind + 1]
         Vs = self.V[left_ind : right_ind + 1]
         PAs = self.PA[left_ind : right_ind + 1]
         quality_L_array = ((Ls / (np.abs(Is) + 0.01 * np.max(Is))) > 0.1) & (Is > 4 * noise)
-        axs[0].set_xlim(left_ind / self.Ncounts, (right_ind + 1)/self.Ncounts)
+        axs[0].set_xlim(left_ind / self.Ncounts * 360-180, (right_ind + 1)/self.Ncounts*360-180)
         axs[0].scatter(phase_arr[quality_L_array], utils.shift_angle(PAs[quality_L_array]), c='black', s=3)
         axs[1].plot(phase_arr, Is, c='black', label='I', linewidth=1)
         if plot_polarisation == True:

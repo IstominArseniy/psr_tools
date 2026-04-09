@@ -56,9 +56,9 @@ std::map<std::string, double> CppInterface::find_ILVPA(double phi, int mode, boo
 {
     std::vector<double> theta_final;
     double I;
-    
     FixedHeightSolver solver(phi, mode, PSR_, model_);
     double l1 = solver.find_initial_point(false);
+    // std::cout << phi << " " << l1 << std::endl;
     double l2 = std::min(2.5 * get_R_escape(), 2*PSR_.RLC);
     solver.write_params_on_ray(log_path_);
     std::vector<double> theta_init = solver.find_approximate_KO_solution(l1);
@@ -68,7 +68,6 @@ std::map<std::string, double> CppInterface::find_ILVPA(double phi, int mode, boo
         double tau = solver.get_tau();
         I *= std::exp(-tau);
     }
-    
     double V = I * std::tanh(2.0 * theta_final[1]);
     double PA = theta_final[0] * 180.0 / constants::PI;
     std::map<std::string, double> result;
