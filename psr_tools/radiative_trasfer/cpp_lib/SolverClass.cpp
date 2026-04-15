@@ -168,6 +168,13 @@ Vector3d FixedHeightSolver::vMoment (double l) {
   mvec(2) = std::cos(PSR_.chi);
   return mvec;
 }
+Vector3d FixedHeightSolver::beta(Vector3d r, Vector3d m){
+  Vector3d beta_vec;
+  Vector3d Omega_corss_R = PSR_.Rs / constants::c * PSR_.Omega_vec.cross(r);
+  Vector3d b_normalized = model_.Bfield(r, m).normalized();
+  double kappa = -Omega_corss_R.dot(b_normalized) + std::sqrt(std::pow(Omega_corss_R.dot(b_normalized), 2) - Omega_corss_R.dot(Omega_corss_R) + 1);
+  return kappa*b_normalized + Omega_corss_R;
+}
 
 std::pair<double, double> FixedHeightSolver::find_emission_point()
 { 
@@ -179,12 +186,15 @@ std::pair<double, double> FixedHeightSolver::find_emission_point()
   auto func1 = [&](double theta, double phi){
     Vector3d vPoint;
     vPoint << model_.Rem * std::sin(theta) * std::cos(phi), model_.Rem * std::sin(theta) * std::sin(phi), model_.Rem * std::cos(theta);
-    return (model_.Bfield(vPoint, vM)).cross(target_vector)(0);
+    // return (model_.Bfield(vPoint, vM)).cross(target_vector)(0);
+    return (beta(vPoint, vM)).cross(target_vector)(0);
   };
   auto func2 = [&](double theta, double phi){
     Vector3d vPoint;
     vPoint << model_.Rem * std::sin(theta) * std::cos(phi), model_.Rem * std::sin(theta) * std::sin(phi), model_.Rem * std::cos(theta);
-    return (model_.Bfield(vPoint, vM)).cross(target_vector)(1);
+    // return (model_.Bfield(vPoint, vM)).cross(target_vector)(1);
+    return (beta(vPoint, vM)).cross(target_vector)(1);
+
   };
   for(int i = 0; i < 15; i ++) {
       double f1x = DX(func1, theta_em, phi_em);

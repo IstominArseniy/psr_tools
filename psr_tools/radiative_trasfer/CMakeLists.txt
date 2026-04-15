@@ -8,6 +8,7 @@ project(
 # If you set any CMAKE_ variables, that can go here.
 # (But usually don't do this, except maybe for C++ standard)
 set (CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_FLAGS "-O3")
 
 
 # Find packages go here.

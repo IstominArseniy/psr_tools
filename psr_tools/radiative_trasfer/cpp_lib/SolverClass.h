@@ -89,7 +89,11 @@ class FixedHeightSolver{
     /// @param l distance along the ray
     /// @return magnetic moment unit vector (Egien 3d Vector)
     Vector3d vMoment (double l);
-
+    
+    /// @param r - radius vector
+    /// @param m - magnetic moment unit vector
+    /// @return particles velocity vector
+    Vector3d beta(Vector3d r, Vector3d m);
     /// @brief finds spherical angular coordinates of the emission point (on the distance Rem) using ...
     /// @return pair theta_em, phi_em
     std::pair<double, double> find_emission_point();
