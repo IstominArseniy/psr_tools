@@ -1,6 +1,7 @@
 from scipy import integrate
 from scipy import interpolate
 from scipy import special
+from scipy import stats
 import numpy as np
 
 def H1(x):
@@ -23,12 +24,16 @@ def is_float(value):
     return False
   
 
-def inverse_sample_function(dist, Npnts, x_min=-100, x_max=100, n=1e6, **kwargs):
+def inverse_sample_function(dist, Npnts, x_min=-100, x_max=100, n=1e6, random_state=None, **kwargs):
+  
   x = np.linspace(x_min, x_max, int(n))
   cumulative = np.cumsum(dist(x, **kwargs)) 
   cumulative -= cumulative.min()
   f = interpolate.interp1d(cumulative/cumulative.max(), x)
-  return f(np.random.random(int(Npnts)))
+  if random_state is not None:
+    return f(random_state.random(int(Npnts)))
+  else:
+    return f(np.random.random(int(Npnts)))
 
 def calculate_width(chi, beta, rho):
     dzeta = beta + chi
@@ -68,3 +73,10 @@ def shift_angle(angle):
         return angle_vals[0]
     else:
         return angle_vals
+    
+def find_power_law_ind(xs, ys):
+    mask = ((np.isnan(xs))+(np.isnan(ys)))
+    log_xs = np.log(xs[~mask])
+    log_ys = np.log(ys[~mask])
+    res = stats.linregress(log_xs, log_ys)
+    return res.slope, res.rvalue

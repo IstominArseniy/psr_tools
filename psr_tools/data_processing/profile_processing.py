@@ -30,11 +30,7 @@ def calculate_width(chi, beta, rho):
     return 4 * np.arcsin(np.sqrt(np.sin((rho + beta)/2) * np.sin((rho - beta)/2) \
     / np.sin(chi) / np.sin(dzeta)))
 
-def find_power_law_ind(xs, ys):
-    log_xs = np.log(xs)
-    log_ys = np.log(ys)
-    res = scipy.stats.linregress(log_xs, log_ys)
-    return res.slope, res.rvalue
+
 
 # def shift_angle(angle):
 #     angle = np.asarray(angle)

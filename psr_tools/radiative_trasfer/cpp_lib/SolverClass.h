@@ -76,6 +76,11 @@ class FixedHeightSolver{
     /// @return BetaB angle in radians
     double BetaB (double l);
 
+    /// @brief equvivalent of BetaB + delta 
+    /// @param l distnace along the ray
+    /// @return BetaB + delta angle in radians
+    double BetaBmod (double l);
+
     /// @param l distance alnog the ray
     /// @return Q parameter from Kravtsov-Orlov equations
     double Q (double l);
@@ -189,6 +194,10 @@ class FixedHeightSolver{
     /// @param l distance along the ray
     /// @return Derivative of delta parameter form Kravtsov-Orlov equations along the ray
     double delta_derivative(double l);
+
+    /// @param l distance along the ray
+    /// @return Derivative of beta+delta parameter form Kravtsov-Orlov equations along the ray
+    double BetaBmod_derivative(double l);
 
     // -----------------------Cyclotron Absorption------------------------
 

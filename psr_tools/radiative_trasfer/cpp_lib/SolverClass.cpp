@@ -34,8 +34,6 @@ std::vector<double> FixedHeightSolver::solve_KO_equations(std::vector<double> th
     if(stop_condition(it->second)){ // stop integration if Udr > c(?!)
       break;
     }
-    log_stream << it->second <<  ", " << it->first[0] << ", " << it->first[1] << ", " << PSR_.Rs * PSR_.omega_obs / (2.0 * constants::c) * Lambda(it->second) << ", " << BetaB (it->second) + delta (it->second) << ", " <<BetaB (it->second) << ", " << delta (it->second) << ", " << vUdr(it->second)(0) << ", " << vUdr(it->second)(1) << std::endl;
-    // log_stream << -2*vUdr(it->second)(1)*std::cos(theta_kb(it->second))*(std::sin(theta_kb(it->second))-vUdr(it->second)(0)) / ((std::sin(theta_kb(it->second))-vUdr(it->second)(0))*(std::sin(theta_kb(it->second))-vUdr(it->second)(0)) - std::cos(theta_kb(it->second))*std::cos(theta_kb(it->second))*vUdr(it->second)(1)*vUdr(it->second)(1)) << std::endl;
     it++; // make integration step
     }
     log_stream.close();
@@ -71,11 +69,9 @@ void FixedHeightSolver::RHS_for_boost(const std::vector<double>& f, std::vector<
 
 	double LL = Lambda (l);
 	double QQ = Q (l);
-	double BB = BetaB (l);
-	double DD = delta (l);
-
-	dydx[0] = coeff * (-LL / QQ - LL * std::cos(2 * f[0] - 2 * BB - 2 * DD) * std::sinh(2 * f[1]));
-	dydx[1] = coeff * LL * std::sin(2 * f[0] - 2 * BB - 2 * DD) * std::cosh(2 * f[1]);
+	double BB = BetaBmod (l);
+	dydx[0] = coeff * (-LL / QQ - LL * std::cos(2 * f[0] - 2 * BB) * std::sinh(2 * f[1]));
+	dydx[1] = coeff * LL * std::sin(2 * f[0] - 2 * BB) * std::cosh(2 * f[1]);
 }
 
 std::vector<double> FixedHeightSolver::find_approximate_KO_solution(std::vector<double> theta_initial)
@@ -91,15 +87,15 @@ std::vector<double> FixedHeightSolver::find_approximate_KO_solution(double l)
   double starting_point=0;
   Lambda_integral = integrate([this](double l){return this->Lambda(l);}, starting_point, l);
   double coefficient = constants::c / PSR_.Rs / PSR_.omega_obs;
-  double delta_theta = - coefficient / Lambda(starting_point) * (BetaB_derivative(starting_point) + delta_derivative(starting_point)) * std::sin(Lambda_integral / coefficient);
-  double theta2 = -coefficient / Lambda(l) * (BetaB_derivative(l) + delta_derivative(l)) - 1 / 2 / Q(l) + 
-  coefficient / Lambda(starting_point) * (BetaB_derivative(0) + delta_derivative(starting_point)) * std::cos(Lambda_integral / coefficient);
+  double delta_theta = - coefficient / Lambda(starting_point) * BetaBmod_derivative(starting_point) * std::sin(Lambda_integral / coefficient);
+  double theta2 = -coefficient / Lambda(l) * BetaBmod_derivative(l) - 1 / 2 / Q(l) + 
+  coefficient / Lambda(starting_point) * BetaBmod_derivative(0) * std::cos(Lambda_integral / coefficient);
   if (mode_ == 0){
-    theta_final[0] = constants::PI / 2 + BetaB(l) + delta(l) + delta_theta;
+    theta_final[0] = constants::PI / 2 + BetaBmod(l) + delta_theta;
     theta_final[1] = -theta2;
   }
   else{
-    theta_final[0] = BetaB(l) + delta(l) + delta_theta;
+    theta_final[0] = BetaBmod(l) + delta_theta;
     theta_final[1] = theta2;
   }
   return theta_final;
@@ -327,7 +323,6 @@ double FixedHeightSolver::delta (double l) {
   double vy = vUdr(l) (1);
   double sinth = std::sin(theta_kb(l));
   double costh = std::cos(theta_kb(l));
-  // std::cout << phi_ * 180 /constants::PI << " " << -vUdr(0) (1) << " " << -vUdr(0) (0) << " " << std::atan2(-std::cos(theta_kb(0))*vUdr(0) (1), std::sin(theta_kb(0))- vUdr(0) (0)) << std::endl;
   return std::atan2(-costh * vy, sinth-vx);
   // return 0.5 * std::atan(-2*vy*costh*(sinth-vx) / ((sinth-vx)*(sinth-vx) - costh*costh*vy*vy));
   // return 0.5 * std::atan2(-2*vy*costh*(sinth-vx), ((sinth-vx)*(sinth-vx) - costh*costh*vy*vy));
@@ -344,6 +339,21 @@ double FixedHeightSolver::BetaB (double l) {
   double bx = XX.dot(vB(l));
   double by = YY.dot(vB(l));
   return std::atan2(by, bx);  // ??? was atan (by/bx)
+}
+
+double FixedHeightSolver::BetaBmod (double l) {
+  Vector3d XX;
+  Vector3d YY;
+  XX = (PSR_.Omega_vec - PSR_.observer_vec.dot(PSR_.Omega_vec) * PSR_.observer_vec).normalized();
+  YY = PSR_.observer_vec.cross(XX);
+  if (l < 1e-1){
+    l = 1e-1;
+  }
+  Vector3d PAvec;
+  PAvec = vb(l) - PSR_.observer_vec.cross(vb(l).cross(vBetaR(l)));
+  double PAx = XX.dot(PAvec);
+  double PAy = YY.dot(PAvec);
+  return std::atan2(PAy, PAx);  // ??? was atan (by/bx)
 }
 
 double FixedHeightSolver::Q (double l) {
@@ -389,6 +399,12 @@ double FixedHeightSolver::delta_derivative(double l)
 {
   double dl = 1;
   return (delta(l + dl) - delta(l)) / dl;
+}
+
+double FixedHeightSolver::BetaBmod_derivative(double l)
+{
+  double dl = 1;
+  return (BetaBmod(l + dl) - BetaBmod(l)) / dl;
 }
 
 // -----------------------Cyclotron Absorption------------------------
