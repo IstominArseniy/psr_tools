@@ -7,6 +7,8 @@ import scipy.interpolate
 from psr_tools import data_processing as processing
 from psr_tools import utils
 
+from copy import deepcopy
+
 
 
 
@@ -24,7 +26,7 @@ class PulsarProfile:
         self.PA = np.zeros(Ncounts)
 
     @classmethod
-    def from_IQUV(cls, I, Q, U, V, d_phi=None, normalize=True):
+    def from_IQUV(cls, I, Q, U, V, d_phi=None, normalize=False):
         """
         initialize profile class using Stocks parameters in order: I, Q, U, V
         d_phi can be provided if phases do not span 360 degrees. In this case profile I, Q, U, V are padded with zeros.
@@ -54,12 +56,13 @@ class PulsarProfile:
             profile.U /= Imax
             profile.V /= Imax
         profile.L = np.sqrt(Q**2 + U**2)
-        profile.L -= processing.noise_mean(profile.L)
-        profile.PA = utils.shift_angle(0.5 * np.arctan2(U, Q)*180/np.pi)
+        noise = processing.noise_mean(profile.L)
+        profile.L -= noise
+        profile.PA = utils.smooth_angle_array(0.5 * np.arctan2(U, Q)*180/np.pi)
         return profile
 
     @classmethod
-    def from_ILVPA(cls, I, L, V, PA, d_phi=None, normalize=True):
+    def from_ILVPA(cls, I, L, V, PA, d_phi=None, normalize=False):
         """
         initialize profile class using I, L, V, PA
         d_phi can be provided if phases do not span 360 degrees. In this case profile I, L, V, are padded with zeros and PA with Nans
@@ -86,8 +89,8 @@ class PulsarProfile:
             profile.I /= Imax
             profile.L /= Imax
             profile.V /= Imax
-        profile.Q = profile.I * np.cos(profile.PA * np.pi / 180)
-        profile.U = profile.I * np.sin(profile.PA * np.pi / 180)
+        profile.Q = profile.L * np.cos(2 * profile.PA * np.pi / 180)
+        profile.U = profile.L * np.sin(2 * profile.PA * np.pi / 180)
         return profile
     
     @classmethod
@@ -299,7 +302,7 @@ class PulsarProfile:
         PAs = self.PA[left_ind : right_ind + 1]
         quality_L_array = ((Ls / (np.abs(Is) + 0.01 * np.max(Is))) > 0.1) & (Is > 4 * noise)
         axs[0].set_xlim(left_ind / self.Ncounts * 360-180, (right_ind + 1)/self.Ncounts*360-180)
-        axs[0].scatter(phase_arr[quality_L_array], utils.shift_angle(PAs[quality_L_array]), c='black', s=3)
+        axs[0].scatter(phase_arr[quality_L_array], utils.smooth_angle_array(PAs[quality_L_array]), c='black', s=3)
         axs[1].plot(phase_arr, Is, c='black', label='I', linewidth=1)
         if plot_polarisation == True:
             axs[1].plot(phase_arr, Vs, c='blue', label='V')
@@ -310,4 +313,14 @@ class PulsarProfile:
         fig.show()
         return fig, axs
         
-
+    def scatter(self, freq, tau0, freq0, P, exponent=-4):
+        tau_scat = tau0 * (freq/freq0)**exponent
+        delta_scat = tau_scat/P * self.Ncounts  
+        index_arr = np.linspace(0, self.Ncounts, self.Ncounts, endpoint=False)
+        scatter_arr = np.exp(-(index_arr / delta_scat))
+        I_arr = scipy.signal.convolve(self.I, scatter_arr, mode='full', method='direct')[0:self.Ncounts] / np.sum(scatter_arr)
+        Q_arr = scipy.signal.convolve(self.Q, scatter_arr, mode='full', method='direct')[0:self.Ncounts] / np.sum(scatter_arr)
+        U_arr = scipy.signal.convolve(self.U, scatter_arr, mode='full', method='direct')[0:self.Ncounts] / np.sum(scatter_arr)
+        V_arr = scipy.signal.convolve(self.V, scatter_arr, mode='full', method='direct')[0:self.Ncounts] / np.sum(scatter_arr)
+        scattered_profile = PulsarProfile.from_IQUV(I_arr, Q_arr, U_arr, V_arr)
+        return scattered_profile
