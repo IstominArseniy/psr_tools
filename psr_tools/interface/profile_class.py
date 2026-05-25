@@ -313,14 +313,23 @@ class PulsarProfile:
         fig.show()
         return fig, axs
         
-    def scatter(self, freq, tau0, freq0, P, exponent=-4):
+    def scatter(self, freq, tau0, freq0, P, exponent=-4, oversampling=8):
+        # oversampling------------------------------------------
+        phase_arr = np.linspace(0, 1, self.Ncounts)
+        N_oversampled = oversampling * self.Ncounts
+        phase_oversampled = np.linspace(0, 1, N_oversampled)
+        I0_arr = scipy.interpolate.interp1d(phase_arr, self.I)(phase_oversampled)
+        Q0_arr = scipy.interpolate.interp1d(phase_arr, self.Q)(phase_oversampled) 
+        U0_arr = scipy.interpolate.interp1d(phase_arr, self.U)(phase_oversampled) 
+        V0_arr = scipy.interpolate.interp1d(phase_arr, self.V)(phase_oversampled) 
+        #--------------------------------------------------------
         tau_scat = tau0 * (freq/freq0)**exponent
-        delta_scat = tau_scat/P * self.Ncounts  
-        index_arr = np.linspace(0, self.Ncounts, self.Ncounts, endpoint=False)
+        delta_scat = tau_scat/P * N_oversampled
+        index_arr = np.linspace(0, N_oversampled, N_oversampled, endpoint=False)
         scatter_arr = np.exp(-(index_arr / delta_scat))
-        I_arr = scipy.signal.convolve(self.I, scatter_arr, mode='full', method='direct')[0:self.Ncounts] / np.sum(scatter_arr)
-        Q_arr = scipy.signal.convolve(self.Q, scatter_arr, mode='full', method='direct')[0:self.Ncounts] / np.sum(scatter_arr)
-        U_arr = scipy.signal.convolve(self.U, scatter_arr, mode='full', method='direct')[0:self.Ncounts] / np.sum(scatter_arr)
-        V_arr = scipy.signal.convolve(self.V, scatter_arr, mode='full', method='direct')[0:self.Ncounts] / np.sum(scatter_arr)
-        scattered_profile = PulsarProfile.from_IQUV(I_arr, Q_arr, U_arr, V_arr)
+        I_arr = scipy.signal.convolve(I0_arr, scatter_arr, mode='full', method='direct')[0:N_oversampled] / np.sum(scatter_arr)
+        Q_arr = scipy.signal.convolve(Q0_arr, scatter_arr, mode='full', method='direct')[0:N_oversampled] / np.sum(scatter_arr)
+        U_arr = scipy.signal.convolve(U0_arr, scatter_arr, mode='full', method='direct')[0:N_oversampled] / np.sum(scatter_arr)
+        V_arr = scipy.signal.convolve(V0_arr, scatter_arr, mode='full', method='direct')[0:N_oversampled] / np.sum(scatter_arr)
+        scattered_profile = PulsarProfile.from_IQUV(I_arr[::oversampling], Q_arr[::oversampling], U_arr[::oversampling], V_arr[::oversampling])
         return scattered_profile
