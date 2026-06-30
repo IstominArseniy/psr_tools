@@ -300,9 +300,13 @@ class PulsarProfile:
         Ls = self.L[left_ind : right_ind + 1]
         Vs = self.V[left_ind : right_ind + 1]
         PAs = self.PA[left_ind : right_ind + 1]
-        quality_L_array = ((Ls / (np.abs(Is) + 0.01 * np.max(Is))) > 0.1) & (Is > 4 * noise)
+        noise_L = processing.noise_estimation(self.L)
+
+        # quality_L_array = ((Ls / (np.abs(Is) + 0.01 * np.max(Is))) > 0.1) & (Is > 4 * noise)
+        quality_L_array = Ls > 4 * noise_L
         axs[0].set_xlim(left_ind / self.Ncounts * 360-180, (right_ind + 1)/self.Ncounts*360-180)
-        axs[0].scatter(phase_arr[quality_L_array], utils.smooth_angle_array(PAs[quality_L_array]), c='black', s=3)
+        # axs[0].scatter(phase_arr[quality_L_array], utils.smooth_angle_array(PAs[quality_L_array]), c='black', s=3)
+        axs[0].scatter(phase_arr[quality_L_array], PAs[quality_L_array], c='black', s=3)
         axs[1].plot(phase_arr, Is, c='black', label='I', linewidth=1)
         if plot_polarisation == True:
             axs[1].plot(phase_arr, Vs, c='blue', label='V')
@@ -313,23 +317,23 @@ class PulsarProfile:
         fig.show()
         return fig, axs
         
-    def scatter(self, freq, tau0, freq0, P, exponent=-4, oversampling=8):
+    def scatter(self, freq, tau0, freq0, P, exponent=-4, oversampling=4):
         # oversampling------------------------------------------
         phase_arr = np.linspace(0, 1, self.Ncounts)
         N_oversampled = oversampling * self.Ncounts
         phase_oversampled = np.linspace(0, 1, N_oversampled)
-        I0_arr = scipy.interpolate.interp1d(phase_arr, self.I)(phase_oversampled)
-        Q0_arr = scipy.interpolate.interp1d(phase_arr, self.Q)(phase_oversampled) 
-        U0_arr = scipy.interpolate.interp1d(phase_arr, self.U)(phase_oversampled) 
-        V0_arr = scipy.interpolate.interp1d(phase_arr, self.V)(phase_oversampled) 
+        I0_arr = scipy.interpolate.RegularGridInterpolator((phase_arr,), self.I, method='linear')(phase_oversampled)
+        Q0_arr = scipy.interpolate.RegularGridInterpolator((phase_arr,), self.Q, method='linear')(phase_oversampled) 
+        U0_arr = scipy.interpolate.RegularGridInterpolator((phase_arr,), self.U, method='linear')(phase_oversampled) 
+        V0_arr = scipy.interpolate.RegularGridInterpolator((phase_arr,), self.V, method='linear')(phase_oversampled) 
         #--------------------------------------------------------
         tau_scat = tau0 * (freq/freq0)**exponent
         delta_scat = tau_scat/P * N_oversampled
         index_arr = np.linspace(0, N_oversampled, N_oversampled, endpoint=False)
         scatter_arr = np.exp(-(index_arr / delta_scat))
-        I_arr = scipy.signal.convolve(I0_arr, scatter_arr, mode='full', method='direct')[0:N_oversampled] / np.sum(scatter_arr)
-        Q_arr = scipy.signal.convolve(Q0_arr, scatter_arr, mode='full', method='direct')[0:N_oversampled] / np.sum(scatter_arr)
-        U_arr = scipy.signal.convolve(U0_arr, scatter_arr, mode='full', method='direct')[0:N_oversampled] / np.sum(scatter_arr)
-        V_arr = scipy.signal.convolve(V0_arr, scatter_arr, mode='full', method='direct')[0:N_oversampled] / np.sum(scatter_arr)
+        I_arr = scipy.signal.convolve(I0_arr, scatter_arr, mode='full', method='fft')[0:N_oversampled] / np.sum(scatter_arr)
+        Q_arr = scipy.signal.convolve(Q0_arr, scatter_arr, mode='full', method='fft')[0:N_oversampled] / np.sum(scatter_arr)
+        U_arr = scipy.signal.convolve(U0_arr, scatter_arr, mode='full', method='fft')[0:N_oversampled] / np.sum(scatter_arr)
+        V_arr = scipy.signal.convolve(V0_arr, scatter_arr, mode='full', method='fft')[0:N_oversampled] / np.sum(scatter_arr)
         scattered_profile = PulsarProfile.from_IQUV(I_arr[::oversampling], Q_arr[::oversampling], U_arr[::oversampling], V_arr[::oversampling])
         return scattered_profile

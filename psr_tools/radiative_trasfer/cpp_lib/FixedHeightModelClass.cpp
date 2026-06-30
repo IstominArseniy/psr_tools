@@ -37,7 +37,7 @@ double FixedHeightModel::fDist (double gamma) {
   return ((6.0 * gamma0) / (std::pow(2.0, 1.0/6.0) * constants::PI)) * (std::pow(gamma, 4) / (2.0 * std::pow(gamma, 6) + std::pow(gamma0, 6)));
 }
 
-double FixedHeightModel::INTEGRAL (double gamma, double A) { // THIS IS TRASH. REDO AS FAST AS POSSIBLE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+double FixedHeightModel::INTEGRAL (double gamma, double A) { 
   return -(std::pow(2, 2.0 / 3.0)*(-2*std::sqrt(3)*std::atan((2*std::pow(2, 1.0 / 3.0)*std::pow(gamma,2) - std::pow(gamma0,2))/
           (std::sqrt(3)*std::pow(gamma0,2))) - 2*std::log(std::pow(2, 1.0 / 3.0)*std::pow(gamma,2) + std::pow(gamma0,2)) +
           std::log(std::pow(2, 2.0 / 3.0)*std::pow(gamma,4) - std::pow(2, 1.0 / 3.0)*std::pow(gamma,2)*std::pow(gamma0,2) +
@@ -53,7 +53,7 @@ double FixedHeightModel::INTEGRAL (double gamma, double A) { // THIS IS TRASH. R
 
 double FixedHeightModel::Lambda_type_avrg(double A)
 {
-    return INTEGRAL(1000000, A) - INTEGRAL(0, A); // TRASH CONTINUES. REDO AS FAST AS POSSIBLE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    return INTEGRAL(1000000, A) - INTEGRAL(0, A); 
 }
 
 double FixedHeightModel::ImEps_type_avrg(double A)
