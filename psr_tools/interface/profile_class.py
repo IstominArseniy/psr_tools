@@ -58,7 +58,7 @@ class PulsarProfile:
         profile.L = np.sqrt(Q**2 + U**2)
         noise = processing.noise_mean(profile.L)
         profile.L -= noise
-        profile.PA = utils.smooth_angle_array(0.5 * np.arctan2(U, Q)*180/np.pi)
+        profile.PA = 0.5 * np.arctan2(U, Q)*180/np.pi
         return profile
 
     @classmethod
@@ -265,6 +265,19 @@ class PulsarProfile:
         peaks, info = scipy.signal.find_peaks(smoothed_profile, prominence = 4 * noise, height=max(4 * noise, np.max(smoothed_profile) * 0.01))
         return peaks
 
+    def add_gaussian_noise(self, sigma):
+        """
+        adds gaussian noise with dispersion sigma^2 to all stocks measurements and recalculates corresponding
+        linear polarisation and PA
+        """
+        self.I = self.I + np.random.normal(0, sigma, self.I.shape)
+        self.Q = self.Q + np.random.normal(0, sigma, self.Q.shape)
+        self.U = self.U + np.random.normal(0, sigma, self.U.shape)
+        self.V = self.V + np.random.normal(0, sigma, self.V.shape)
+        self.L = np.where(self.L / sigma > 1.57, np.sqrt((self.L/sigma)**2 - 1) * sigma, 0)
+        self.PA = 0.5 * np.arctan2(self.U, self.Q) * 180 / np.pi
+    
+
     def find_profile_type(self):
         peaks_arr = self.find_peaks()
         if peaks_arr.shape[0] == 1:
@@ -286,7 +299,7 @@ class PulsarProfile:
             return np.nan
     
     def plot_profile(self, plot_polarisation=True, plot_fit=False, zoom=False):
-        fig, axs = plt.subplots(2, height_ratios=[1, 4])
+        fig, axs = plt.subplots(2, height_ratios=[1, 4], sharex=True)
         noise = processing.noise_estimation(self.I)
         left_ind = 0 # leftmost index to plot
         right_ind = self.Ncounts - 1 # rightmost index to plot
@@ -304,16 +317,20 @@ class PulsarProfile:
 
         # quality_L_array = ((Ls / (np.abs(Is) + 0.01 * np.max(Is))) > 0.1) & (Is > 4 * noise)
         quality_L_array = Ls > 4 * noise_L
-        axs[0].set_xlim(left_ind / self.Ncounts * 360-180, (right_ind + 1)/self.Ncounts*360-180)
-        # axs[0].scatter(phase_arr[quality_L_array], utils.smooth_angle_array(PAs[quality_L_array]), c='black', s=3)
-        axs[0].scatter(phase_arr[quality_L_array], PAs[quality_L_array], c='black', s=3)
+        # axs[0].set_xlim(left_ind / self.Ncounts * 360-180, (right_ind + 1)/self.Ncounts*360-180)
+        axs[0].scatter(phase_arr[quality_L_array], utils.smooth_angle_array(PAs[quality_L_array]), c='black', s=3)
+        # PA_shift = np.mean(PAs[quality_L_array]) - np.mean(PAs[quality_L_array])%180
+        # axs[0].scatter(phase_arr[quality_L_array], PAs[quality_L_array] - PA_shift, c='black', s=3)
+        axs[0].set_ylabel(r'PA$\degree$', size=16)
+        axs[0].set_xlabel(r'$\phi \degree$', size=16)
         axs[1].plot(phase_arr, Is, c='black', label='I', linewidth=1)
         if plot_polarisation == True:
             axs[1].plot(phase_arr, Vs, c='blue', label='V')
             axs[1].plot(phase_arr, Ls, c='red', label='L')
         if plot_fit == True:
             axs[1].plot(phase_arr, self.get_smoothed_profile()[left_ind : right_ind + 1], c='yellow')
-        fig.legend()
+        axs[1].set_xlabel(r'$\phi \degree$', size=16)
+        axs[1].legend()
         fig.show()
         return fig, axs
         
