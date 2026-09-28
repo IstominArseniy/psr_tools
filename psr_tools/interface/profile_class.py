@@ -334,23 +334,41 @@ class PulsarProfile:
         fig.show()
         return fig, axs
         
+    # def scatter(self, freq, tau0, freq0, P, exponent=-4, oversampling=4):
+    #     # oversampling------------------------------------------
+    #     phase_arr = np.linspace(0, 1, self.Ncounts)
+    #     N_oversampled = oversampling * self.Ncounts
+    #     phase_oversampled = np.linspace(0, 1, N_oversampled)
+    #     I0_arr = scipy.interpolate.RegularGridInterpolator((phase_arr,), self.I, method='linear')(phase_oversampled)
+    #     Q0_arr = scipy.interpolate.RegularGridInterpolator((phase_arr,), self.Q, method='linear')(phase_oversampled) 
+    #     U0_arr = scipy.interpolate.RegularGridInterpolator((phase_arr,), self.U, method='linear')(phase_oversampled) 
+    #     V0_arr = scipy.interpolate.RegularGridInterpolator((phase_arr,), self.V, method='linear')(phase_oversampled) 
+    #     #--------------------------------------------------------
+    #     tau_scat = tau0 * (freq/freq0)**exponent
+    #     delta_scat = tau_scat/P * N_oversampled
+    #     index_arr = np.linspace(0, N_oversampled, N_oversampled, endpoint=False)
+    #     scatter_arr = np.exp(-(index_arr / delta_scat))
+    #     I_arr = scipy.signal.convolve(I0_arr, scatter_arr, mode='full', method='direct')[0:N_oversampled] / np.sum(scatter_arr)
+    #     Q_arr = scipy.signal.convolve(Q0_arr, scatter_arr, mode='full', method='direct')[0:N_oversampled] / np.sum(scatter_arr)
+    #     U_arr = scipy.signal.convolve(U0_arr, scatter_arr, mode='full', method='direct')[0:N_oversampled] / np.sum(scatter_arr)
+    #     V_arr = scipy.signal.convolve(V0_arr, scatter_arr, mode='full', method='direct')[0:N_oversampled] / np.sum(scatter_arr)
+    #     scattered_profile = PulsarProfile.from_IQUV(I_arr[::oversampling], Q_arr[::oversampling], U_arr[::oversampling], V_arr[::oversampling])
+    #     return scattered_profile
+
+    @staticmethod
+    def exact_scatter(phase_arr, data_arr, tau):
+        data_func = scipy.interpolate.CubicSpline(phase_arr, data_arr)
+        scattered_data = np.zeros_like(data_arr)
+        for ind, phase in enumerate(phase_arr):
+            scattered_data[ind] = 1/tau*scipy.integrate.quad(lambda x: data_func(x)*np.exp(-(phase-x)/tau), 0, phase)[0]
+        return scattered_data
+    
     def scatter(self, freq, tau0, freq0, P, exponent=-4, oversampling=4):
-        # oversampling------------------------------------------
         phase_arr = np.linspace(0, 1, self.Ncounts)
-        N_oversampled = oversampling * self.Ncounts
-        phase_oversampled = np.linspace(0, 1, N_oversampled)
-        I0_arr = scipy.interpolate.RegularGridInterpolator((phase_arr,), self.I, method='linear')(phase_oversampled)
-        Q0_arr = scipy.interpolate.RegularGridInterpolator((phase_arr,), self.Q, method='linear')(phase_oversampled) 
-        U0_arr = scipy.interpolate.RegularGridInterpolator((phase_arr,), self.U, method='linear')(phase_oversampled) 
-        V0_arr = scipy.interpolate.RegularGridInterpolator((phase_arr,), self.V, method='linear')(phase_oversampled) 
-        #--------------------------------------------------------
         tau_scat = tau0 * (freq/freq0)**exponent
-        delta_scat = tau_scat/P * N_oversampled
-        index_arr = np.linspace(0, N_oversampled, N_oversampled, endpoint=False)
-        scatter_arr = np.exp(-(index_arr / delta_scat))
-        I_arr = scipy.signal.convolve(I0_arr, scatter_arr, mode='full', method='fft')[0:N_oversampled] / np.sum(scatter_arr)
-        Q_arr = scipy.signal.convolve(Q0_arr, scatter_arr, mode='full', method='fft')[0:N_oversampled] / np.sum(scatter_arr)
-        U_arr = scipy.signal.convolve(U0_arr, scatter_arr, mode='full', method='fft')[0:N_oversampled] / np.sum(scatter_arr)
-        V_arr = scipy.signal.convolve(V0_arr, scatter_arr, mode='full', method='fft')[0:N_oversampled] / np.sum(scatter_arr)
-        scattered_profile = PulsarProfile.from_IQUV(I_arr[::oversampling], Q_arr[::oversampling], U_arr[::oversampling], V_arr[::oversampling])
+        I_scat = PulsarProfile.exact_scatter(phase_arr, self.I, tau_scat)
+        Q_scat = PulsarProfile.exact_scatter(phase_arr, self.Q, tau_scat)
+        U_scat = PulsarProfile.exact_scatter(phase_arr, self.U, tau_scat)
+        V_scat = PulsarProfile.exact_scatter(phase_arr, self.V, tau_scat)
+        scattered_profile = PulsarProfile.from_IQUV(I_scat, Q_scat, U_scat, V_scat)
         return scattered_profile
