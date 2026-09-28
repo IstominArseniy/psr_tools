@@ -65,7 +65,7 @@ class DensityProfile2D:
         plotters.polar_plot(self.n_arr, self.x_arr, self.phi_arr, file_name=file_name)
 
     def get_n(self, x, phi):
-        return self.interpolant((x, phi))
+        return self.interpolant((x, phi%(2*np.pi)))
 
     def get_1D_slice(self, phi, Npoints=None):
         if Npoints is None:
@@ -86,4 +86,4 @@ class DensityProfile2D:
         return scipy.interpolate.RegularGridInterpolator((self.x_arr, self.phi_arr), self.n_arr, method='linear', bounds_error=False, fill_value=0)
     
     def _find_multiplicity(self):
-        return scipy.integrate.trapezoid([scipy.integrate.trapezoid(n_arr_x_cut * self.x_arr, self.x_arr) for n_arr_x_cut in self.n_arr], self.phi_arr)
+        return scipy.integrate.trapezoid([scipy.integrate.trapezoid(n_arr_x_cut, self.phi_arr) for n_arr_x_cut in self.n_arr] * self.x_arr, self.x_arr)
