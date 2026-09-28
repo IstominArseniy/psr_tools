@@ -360,6 +360,8 @@ double FixedHeightSolver::BetaBmod (double l) {
   Vector3d PAvec;
   // PAvec = vb(l) - PSR_.observer_vec.cross(vb(l).cross(vBetaR(l)));
   PAvec = PSR_.observer_vec.cross(vb(l).cross(PSR_.observer_vec - beta(vR(l), vMoment(l))));
+  // PAvec = PSR_.observer_vec.cross(vb(l).cross(PSR_.observer_vec));
+
   double PAx = XX.dot(PAvec);
   double PAy = YY.dot(PAvec);
   return std::atan2(PAy, PAx); 

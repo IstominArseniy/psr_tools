@@ -9,7 +9,9 @@ PYBIND11_MODULE(loki_python_binding, m, py::mod_gil_not_used()) {
     py::class_<CppInterface>(m, "ProfileCalculator")
         .def(py::init<const std::map<std::string, double>, const std::map<std::string, double> >())
         .def("find_ILVPA", &CppInterface::find_ILVPA)
+        .def("find_ILVPA_initial", &CppInterface::find_ILVPA_initial)
         .def("find_I", &CppInterface::find_I)
-        .def("calculate_profile", &CppInterface::calculate_profile);
+        .def("calculate_profile", &CppInterface::calculate_profile)
+        .def("calculate_initial_profile", &CppInterface::calculate_initial_profile);
 
 }

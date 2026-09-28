@@ -79,6 +79,26 @@ std::map<std::string, double> CppInterface::find_ILVPA(double phi, int mode, boo
     return result;
 }
 
+std::map<std::string, double> CppInterface::find_ILVPA_initial(double phi, int mode)
+{
+    std::vector<double> theta_final;
+    double I;
+    FixedHeightSolver solver(phi, mode, PSR_, model_);
+    std::vector<double> theta_init = solver.find_approximate_KO_solution(1);
+    theta_final = theta_init;
+    // theta_final = theta_init;
+    I = solver.find_intensity();
+    double V = I * std::tanh(2.0 * theta_final[1]);
+    double PA = theta_final[0] * 180.0 / constants::PI;
+    std::map<std::string, double> result;
+    result["phase"] = phi;
+    result["I"] = I;
+    result["L"] = std::sqrt(I*I - V*V);
+    result["V"] = -V;
+    result["PA"] = PA;
+    return result;
+}
+
 double CppInterface::find_I(double phi, int mode, bool with_absorption)
 {
     FixedHeightSolver solver(phi, mode, PSR_, model_);
@@ -101,6 +121,16 @@ std::vector<std::map<std::string, double> > CppInterface::calculate_profile(doub
     return profile;
 }
 
+std::vector<std::map<std::string, double> > CppInterface::calculate_initial_profile(double phi1, double phi2, double phi_step, int mode){
+    std::vector<std::map<std::string, double> > profile;
+    double phi_tmp = phi1;
+    while(phi_tmp < phi2){
+        auto result = find_ILVPA_initial(phi_tmp, mode);
+        profile.push_back(result);
+        phi_tmp += phi_step;
+    }
+    return profile;
+}
 
 
 std::vector<double> CppInterface::vectorize_data(std::vector<std::map<std::string, double> > data)

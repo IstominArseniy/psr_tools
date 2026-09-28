@@ -51,6 +51,24 @@ class ProfileCalculator:
             PAs.append(ILVPA['PA'])
         profile = PulsarProfile.from_ILVPA(Is, Ls, Vs, PAs, phi_step, normalize=False)
         return profile
+
+    def calculate_initial_profile(self, phi_start, phi_end, phi_step, mode):
+        phi_arr = np.arange(phi_start, phi_end, phi_step)
+        mode_arr = np.ones(phi_arr.shape[0], dtype=np.int8) * mode
+        res = []
+        res = list(map(lambda phi: self.profile_calculator.find_ILVPA_initial(phi, mode), phi_arr))
+        Is = []
+        Ls = []
+        Vs = []
+        PAs = []
+        for ILVPA in res:
+            Is.append(ILVPA['I'])
+            Ls.append(ILVPA['L'])
+            Vs.append(ILVPA['V'])
+            PAs.append(ILVPA['PA'])
+        profile = PulsarProfile.from_ILVPA(Is, Ls, Vs, PAs, phi_step, normalize=False)
+        return profile
+    
     
     def get_r_esc(self):
         return 1e3*(self.model.multiplicity/1e4)**0.4 * (self.model.gamma/1e2)**(-1.2)*self.PSR.B_surf12**0.4*(self.PSR.freq*1e-3)**(-0.4)*self.PSR.P**(-0.2)
