@@ -363,9 +363,9 @@ class PulsarProfile:
             scattered_data[ind] = 1/tau*scipy.integrate.quad(lambda x: data_func(x)*np.exp(-(phase-x)/tau), 0, phase)[0]
         return scattered_data
     
-    def scatter(self, freq, tau0, freq0, P, exponent=-4, oversampling=4):
+    def scatter(self, freq, tau0, freq0, P=1, exponent=-4):
         phase_arr = np.linspace(0, 1, self.Ncounts)
-        tau_scat = tau0 * (freq/freq0)**exponent
+        tau_scat = (tau0/P) * (freq/freq0)**exponent
         I_scat = PulsarProfile.exact_scatter(phase_arr, self.I, tau_scat)
         Q_scat = PulsarProfile.exact_scatter(phase_arr, self.Q, tau_scat)
         U_scat = PulsarProfile.exact_scatter(phase_arr, self.U, tau_scat)
